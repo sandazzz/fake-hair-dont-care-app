@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// model Donation {
+//   id                Int     @id @default(autoincrement())
+//   civility          String  @db.VarChar(10)
+//   firstName         String  @db.VarChar(100)
+//   lastName          String  @db.VarChar(100)
+//   age               Int? // Facultatif
+//   hairTypes         String // Liste séparée par virgules
+//   email             String  @db.VarChar(150)
+//   allowResale       Boolean @default(false)
+//   allowWigUse       Boolean @default(false)
+//   wantsConfirmation Boolean
+//   message      String?  @db.Text
+//   donationDate DateTime @default(now())
+// }
+
+model Donation {
+  id                Int      @id @default(autoincrement())
+  civility          String
+  firstName         String
+  lastName          String
+  age               Int?
+  hairTypes         String
+  email             String
+  allowResale       Boolean  @default(false)
+  allowWigUse       Boolean  @default(false)
+  wantsConfirmation Boolean
+  message           String?
+  donationDate      DateTime @default(now())
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   // Stocker le hash du mot de passe
+  createdAt DateTime @default(now())
+}

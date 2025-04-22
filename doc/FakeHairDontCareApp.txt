@@ -1,0 +1,97 @@
+Fake Hair Don't Care App
+
+Contact :
+Ines 
+
+Besoin : 
+
+	Créer une app  pour faciliter la réception des dons :
+	Dons de cheveux : 4000 - 6000 dons par mois. 
+
+	Avant l'utilisateur devait aller sur le site,
+	Télécharger le formulaire papier,
+	le remplir et l'envoyer au à l'association avec son don de cheveux.
+
+	Ensuite le formulaire allait à l'association avec les cheveux. 
+	Pour compter les don c'est compliquer, pour gérer 4000 feuilles c'est compliquer, 
+	écologiquement ce n'est pas bon.
+	De plus il faut détruire tous les formulaires.
+
+Solution :
+
+	Mise en place d'un formulaire en ligne. 
+(On a pas de numéro de téléphone, 
+pas d'adresse, juste l'adresse mail.)
+
+	Une fois envoyer, 
+un bon de commande avec un numéro unique doit être envoyer par email 
+(l'utilisateur sera informé via une popup sur le site). 
+
+	L'association aura un Dashboard. 
+Il va devoir se login avec un email et un mot de passe (peut-être mise en place d'Oauth ?)
+Une fois connecté, il pourrait voir une vingtaine de commande.
+il aura une barre de recherche. 
+Il pourra faire des recherches par bon de commande.
+Quand l'utilisateur clique sur une commande, il aura une fiche détaillé.
+
+Quand le don est reçu par l'association, 
+l'utilisateur pourra confirmer la réception du don et pourra envoyer un mail personalisé.
+Il y aura un compteur de don (par an ? par mois ?)
+
+Les dons seront supprimer au bout d'1 ou 2 ans (maximum)
+
+------------------------------------------------------------------------------------
+
+User story : 
+
+	User Stories – Donor
+
+US1 – As a donor
+I want to access an online form
+So that I no longer need to download, print, and mail a paper form with my hair donation.
+
+US2 – As a donor
+I want to fill out a simple form with my personal information (name, surname, email, etc.)
+So that the association can identify and track my donation.
+
+US3 – As a donor
+I want to receive a confirmation email with a unique order number
+So that I can attach it to my hair donation and ensure it is correctly tracked.
+
+US4 – As a donor
+I want to see a confirmation popup once I submit the form
+So that I know my submission has been successfully sent.
+
+	User Stories – Admin (Association)
+
+US5 – As an admin
+I want to log in using an email and password (or via OAuth)
+So that access to the dashboard is secure.
+
+US6 – As an admin
+I want to view a paginated list of donation orders
+So that I can easily manage and process incoming donations.
+
+US7 – As an admin
+I want to search for an order by its unique order number
+So that I can quickly find a specific donation.
+
+US8 – As an admin
+I want to click on an order to see detailed donor information
+So that I can verify the donation when it is received.
+
+US9 – As an admin
+I want to confirm the reception of a donation through the dashboard
+So that the donation status can be updated 
+
+US10 – As an admin
+I want to send a personalized email to the donor upon receiving their donation
+So that I can thank them and acknowledge their contribution.
+
+US11 – As an admin
+I want to see donation statistics (monthly and/or yearly)
+So that I can track the evolution and impact of donations over time.
+
+US12 – As an admin
+I want donations and their data to be automatically deleted after 1–2 years
+So that we comply with data retention policies and reduce administrative clutter.
