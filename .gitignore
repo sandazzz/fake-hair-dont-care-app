@@ -45,3 +45,6 @@ generated/prisma/
 
 dev.db
 dev.db-journal
+
+#route
+app/sign-up
