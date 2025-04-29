@@ -11,21 +11,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model Donation {
-//   id                Int     @id @default(autoincrement())
-//   civility          String  @db.VarChar(10)
-//   firstName         String  @db.VarChar(100)
-//   lastName          String  @db.VarChar(100)
-//   age               Int? // Facultatif
-//   hairTypes         String // Liste séparée par virgules
-//   email             String  @db.VarChar(150)
-//   allowResale       Boolean @default(false)
-//   allowWigUse       Boolean @default(false)
-//   wantsConfirmation Boolean
-//   message      String?  @db.Text
-//   donationDate DateTime @default(now())
-// }
-
 model Donation {
   id                Int      @id @default(autoincrement())
   civility          String
@@ -42,8 +27,60 @@ model Donation {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String   // Stocker le hash du mot de passe
-  createdAt DateTime @default(now())
+  id            String    @id
+  email         String    @unique
+  createdAt     DateTime  @default(now())
+  name          String
+  emailVerified Boolean
+  image         String?
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }
