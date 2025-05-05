@@ -12,7 +12,7 @@ datasource db {
 }
 
 model Donation {
-  id                Int      @id @default(autoincrement())
+  id                String   @id @default(cuid())
   civility          String
   firstName         String
   lastName          String
@@ -21,9 +21,10 @@ model Donation {
   email             String
   allowResale       Boolean  @default(false)
   allowWigUse       Boolean  @default(false)
-  wantsConfirmation Boolean
+  wantsConfirmation Boolean  @default(false)
   message           String?
-  donationDate      DateTime @default(now())
+  specialId         String
+  createdAt         DateTime @default(now())
 }
 
 model User {
