@@ -1,6 +1,5 @@
 "use client";
 
-import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -25,42 +24,18 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
-// 1. --- Schéma Zod ----------------------------------------------------------
-
-const hairTypesEnum = z.enum([
-  "Naturels (non colorés/non décolorés)",
-  "Coloration Végétale",
-  "Tie and Dye (ombré)",
-  "Colorés",
-  "Décolorés",
-  "Méchés",
-  "Henné (coloré/neutre)",
-]);
-
-const DonationSchema = z.object({
-  civility: z.enum(["monsieur", "madame"]),
-  firstName: z.string(),
-  lastName: z.string(),
-  age: z.number().int().optional(),
-  hairTypes: hairTypesEnum,
-  email: z.string().email(),
-  allowResale: z.boolean().default(false),
-  allowWigUse: z.boolean().default(false),
-  wantsConfirmation: z.boolean().default(false),
-  message: z.string().optional(),
-});
-
-type DonationInput = z.input<typeof DonationSchema>; // boolean | undefined
-type DonationOutput = z.output<typeof DonationSchema>;
-// 2. --- Composant React ------------------------------------------------------
+import { sendDonation } from "./send-donation.action";
+import {
+  DonationInput,
+  DonationOutput,
+  DonationSchema,
+  hairTypesEnum,
+} from "@/schemas/donation";
 
 export default function DonationForm() {
-  const form = useForm<
-    DonationInput, // ① valeurs manipulées par les champs
-    undefined, // ② (pas de contexte)
-    DonationOutput // ③ valeurs reçues par onSubmit
-  >({
+  const form = useForm<DonationInput, undefined, DonationOutput>({
     resolver: zodResolver(DonationSchema),
     defaultValues: {
       firstName: "",
@@ -74,8 +49,30 @@ export default function DonationForm() {
     },
   });
 
-  const onSubmit = (data: DonationOutput) => {
-    console.table(data); // toutes les cases booléennes sont garanties présentes
+  const onSubmit = async (data: DonationOutput) => {
+    console.table(data);
+
+    const result = await sendDonation(data);
+
+    if (result?.serverError) {
+      toast.error("Erreur serveur", {
+        description: "Une erreur est survenue lors de l'envoi du formulaire.",
+      });
+      return;
+    }
+
+    if (result?.validationErrors) {
+      toast.error("Erreur de validation", {
+        description: "Veuillez vérifier les champs du formulaire.",
+      });
+      return;
+    }
+
+    toast.success("Don enregistré", {
+      description: "Merci pour votre contribution !",
+    });
+
+    form.reset();
   };
 
   return (

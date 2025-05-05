@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@faker-js/faker':
+        specifier: ^9.7.0
+        version: 9.7.0
       '@hookform/resolvers':
         specifier: ^5.0.1
         version: 5.0.1(react-hook-form@7.56.1(react@19.1.0))
@@ -29,6 +32,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.0
         version: 1.2.0(@types/react@19.1.2)(react@19.1.0)
+      '@radix-ui/react-toast':
+        specifier: ^1.2.11
+        version: 1.2.11(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       better-auth:
         specifier: ^1.2.7
         version: 1.2.7
@@ -44,6 +50,12 @@ importers:
       next:
         specifier: 15.3.1
         version: 15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      next-safe-action:
+        specifier: ^7.10.8
+        version: 7.10.8(next@15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(zod@3.24.3)
+      next-themes:
+        specifier: ^0.4.6
+        version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       nodemailer:
         specifier: ^6.10.1
         version: 6.10.1
@@ -311,6 +323,10 @@ packages:
   '@eslint/plugin-kit@0.2.8':
     resolution: {integrity: sha512-ZAoA40rNMPwSm+AeHpCq8STiNAwzWLJuP8Xv4CHIc9wv/PSuExjMrmjfYNj682vW0OOiZ1HKxzvjQr9XZIisQA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@faker-js/faker@9.7.0':
+    resolution: {integrity: sha512-aozo5vqjCmDoXLNUJarFZx2IN/GgGaogY4TMJ6so/WLZOWpSV7fvj2dmrV6sEAnUm1O7aCrhTibjpzeDFgNqbg==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@floating-ui/core@1.6.9':
     resolution: {integrity: sha512-uMXCuQ3BItDUbAMhIXw7UPXRfAlOAvZzdK9BWpE60MCn+Svt3aLn9jsPTi/WNGlRUu2uI0v5S7JiIUsbsvh3fw==}
@@ -820,6 +836,19 @@ packages:
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
     peerDependenciesMeta:
       '@types/react':
+        optional: true
+
+  '@radix-ui/react-toast@1.2.11':
+    resolution: {integrity: sha512-Ed2mlOmT+tktOsu2NZBK1bCSHh/uqULu1vWOkpQTVq53EoOuZUZw7FInQoDB3uil5wZc2oe0XN9a7uVZB7/6AQ==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
         optional: true
 
   '@radix-ui/react-use-callback-ref@1.1.1':
@@ -1995,6 +2024,33 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
+  next-safe-action@7.10.8:
+    resolution: {integrity: sha512-cTBoPWtvQ0t83N0a5zaveOh9vP2g3//d0hgzPJ4ch1EXCyt9+bavbVNgyOYbzWUwFerppHeFXPYsg7pbRulLQw==}
+    engines: {node: '>=18.17'}
+    peerDependencies:
+      '@sinclair/typebox': '>= 0.33.3'
+      next: '>= 14.0.0'
+      react: '>= 18.2.0'
+      react-dom: '>= 18.2.0'
+      valibot: '>= 0.36.0'
+      yup: '>= 1.0.0'
+      zod: '>= 3.0.0'
+    peerDependenciesMeta:
+      '@sinclair/typebox':
+        optional: true
+      valibot:
+        optional: true
+      yup:
+        optional: true
+      zod:
+        optional: true
+
+  next-themes@0.4.6:
+    resolution: {integrity: sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==}
+    peerDependencies:
+      react: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+
   next@15.3.1:
     resolution: {integrity: sha512-8+dDV0xNLOgHlyBxP1GwHGVaNXsmp+2NhZEYrXr24GWLHtt27YrBPbPuHvzlhi7kZNYjeJNR93IF5zfFu5UL0g==}
     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
@@ -2635,6 +2691,8 @@ snapshots:
       '@eslint/core': 0.13.0
       levn: 0.4.1
 
+  '@faker-js/faker@9.7.0': {}
+
   '@floating-ui/core@1.6.9':
     dependencies:
       '@floating-ui/utils': 0.2.9
@@ -3095,6 +3153,26 @@ snapshots:
       react: 19.1.0
     optionalDependencies:
       '@types/react': 19.1.2
+
+  '@radix-ui/react-toast@1.2.11(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.2
+      '@radix-ui/react-collection': 1.1.4(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.1.2)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.1.2)(react@19.1.0)
+      '@radix-ui/react-dismissable-layer': 1.1.7(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-portal': 1.1.6(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-presence': 1.1.4(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.0(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.1.2)(react@19.1.0)
+      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.1.2)(react@19.1.0)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.1.2)(react@19.1.0)
+      '@radix-ui/react-visually-hidden': 1.2.0(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.1.2
+      '@types/react-dom': 19.1.2(@types/react@19.1.2)
 
   '@radix-ui/react-use-callback-ref@1.1.1(@types/react@19.1.2)(react@19.1.0)':
     dependencies:
@@ -4421,6 +4499,19 @@ snapshots:
   nanostores@0.11.4: {}
 
   natural-compare@1.4.0: {}
+
+  next-safe-action@7.10.8(next@15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(zod@3.24.3):
+    dependencies:
+      next: 15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      zod: 3.24.3
+
+  next-themes@0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   next@15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
