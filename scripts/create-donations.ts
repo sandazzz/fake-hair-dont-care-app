@@ -3,6 +3,7 @@ import { faker } from "@faker-js/faker";
 import { hairTypesEnum } from "@/schemas/donation"; // ajuste ce chemin
 
 const civilities = ["monsieur", "madame"];
+const states = ["pending", "confirmed"];
 
 async function seedDonations() {
   console.log("Seeding donations...");
@@ -18,6 +19,7 @@ async function seedDonations() {
     const wantsConfirmation = faker.datatype.boolean();
     const message = faker.lorem.sentence();
     const specialId = faker.string.alphanumeric(12).toUpperCase();
+    const status = faker.helpers.arrayElement(states);
 
     await prisma.donation.create({
       data: {
@@ -32,6 +34,7 @@ async function seedDonations() {
         wantsConfirmation,
         message,
         specialId,
+        status,
       },
     });
   }

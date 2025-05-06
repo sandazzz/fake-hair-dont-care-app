@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/auth-session";
 import { SignOutButton } from "./signout-button";
 import { redirect } from "next/navigation";
+import { DashboardPage } from "@/components/dashboard/dashboard-page";
 
 export default async function Dashboard() {
   const session = await getSession();
@@ -8,10 +9,5 @@ export default async function Dashboard() {
     redirect("/sign-in"); // ici, on fait une redirection SERVER-SIDE
   }
 
-  return (
-    <main>
-      Welcome to dashboard
-      <SignOutButton />
-    </main>
-  );
+  return <DashboardPage />;
 }
