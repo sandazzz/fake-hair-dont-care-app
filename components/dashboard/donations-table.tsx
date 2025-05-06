@@ -7,8 +7,8 @@ import {
   ChevronUp,
   MoreHorizontal,
   Search,
-  Check,
-  X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -35,80 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Mock data - in a real app, this would come from your database
-const donations = [
-  {
-    id: "don_1",
-    specialId: "HD12345",
-    civility: "madame",
-    firstName: "Marie",
-    lastName: "Dupont",
-    age: 28,
-    hairTypes: "Naturels (non colorés/non décolorés)",
-    email: "marie.dupont@example.com",
-    allowResale: true,
-    allowWigUse: true,
-    wantsConfirmation: true,
-    createdAt: "2023-09-15T10:30:00Z",
-  },
-  {
-    id: "don_2",
-    specialId: "HD12346",
-    civility: "madame",
-    firstName: "Sophie",
-    lastName: "Martin",
-    age: 34,
-    hairTypes: "Colorés",
-    email: "sophie.martin@example.com",
-    allowResale: false,
-    allowWigUse: true,
-    wantsConfirmation: true,
-    createdAt: "2023-09-14T14:20:00Z",
-  },
-  {
-    id: "don_3",
-    specialId: "HD12347",
-    civility: "monsieur",
-    firstName: "Thomas",
-    lastName: "Bernard",
-    age: 42,
-    hairTypes: "Méchés",
-    email: "thomas.bernard@example.com",
-    allowResale: true,
-    allowWigUse: false,
-    wantsConfirmation: false,
-    createdAt: "2023-09-13T09:15:00Z",
-  },
-  {
-    id: "don_4",
-    specialId: "HD12348",
-    civility: "madame",
-    firstName: "Julie",
-    lastName: "Petit",
-    age: 25,
-    hairTypes: "Tie and Dye (ombré)",
-    email: "julie.petit@example.com",
-    allowResale: true,
-    allowWigUse: true,
-    wantsConfirmation: false,
-    createdAt: "2023-09-12T16:45:00Z",
-  },
-  {
-    id: "don_5",
-    specialId: "HD12349",
-    civility: "monsieur",
-    firstName: "Nicolas",
-    lastName: "Robert",
-    age: 31,
-    hairTypes: "Naturels (non colorés/non décolorés)",
-    email: "nicolas.robert@example.com",
-    allowResale: false,
-    allowWigUse: false,
-    wantsConfirmation: true,
-    createdAt: "2023-09-11T11:30:00Z",
-  },
-];
+import { Donation } from "@/generated/prisma";
 
 const hairTypeOptions = [
   "Naturels (non colorés/non décolorés)",
@@ -120,11 +47,25 @@ const hairTypeOptions = [
   "Henné (coloré/neutre)",
 ];
 
-export function DonationsTable() {
+const statusOptions = [
+  { value: "all", label: "All statuses" },
+  { value: "pending", label: "Pending" },
+  { value: "confirmed", label: "Confirmed" },
+];
+
+export function DonationsTable({
+  donationsList,
+}: {
+  donationsList: Donation[];
+}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [hairTypeFilter, setHairTypeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [sortField, setSortField] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [donations, setDonations] = useState<Donation[]>(donationsList);
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -133,6 +74,21 @@ export function DonationsTable() {
       setSortField(field);
       setSortDirection("asc");
     }
+  };
+
+  const handleConfirmDonation = (id: string) => {
+    // In a real app, this would call your API to update the donation status
+    setDonations(
+      donations.map((donation) =>
+        donation.id === id ? { ...donation, status: "confirmed" } : donation
+      )
+    );
+  };
+
+  const handleSendEmail = (id: string, email: string) => {
+    // In a real app, this would open a modal or redirect to an email form
+    console.log(`Sending email to ${email} for donation ${id}`);
+    alert(`Email would be sent to ${email}`);
   };
 
   const filteredDonations = donations
@@ -147,6 +103,9 @@ export function DonationsTable() {
     })
     .filter((donation) =>
       hairTypeFilter ? donation.hairTypes === hairTypeFilter : true
+    )
+    .filter((donation) =>
+      statusFilter !== "all" ? donation.status === statusFilter : true
     )
     .sort((a, b) => {
       if (sortField === "createdAt") {
@@ -166,7 +125,16 @@ export function DonationsTable() {
       return 0;
     });
 
-  const formatDate = (dateString: string) => {
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredDonations.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredDonations.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const formatDate = (dateString: Date) => {
     return new Date(dateString).toLocaleDateString("fr-FR", {
       year: "numeric",
       month: "short",
@@ -180,13 +148,13 @@ export function DonationsTable() {
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search donations..."
+            placeholder="Search by name or order #..."
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center gap-2">
           <Select value={hairTypeFilter} onValueChange={setHairTypeFilter}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by hair type" />
@@ -200,6 +168,19 @@ export function DonationsTable() {
               ))}
             </SelectContent>
           </Select>
+
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-[150px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              {statusOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -207,7 +188,7 @@ export function DonationsTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead className="w-[100px]">Order #</TableHead>
               <TableHead
                 className="cursor-pointer"
                 onClick={() => handleSort("name")}
@@ -223,7 +204,7 @@ export function DonationsTable() {
                 </div>
               </TableHead>
               <TableHead>Hair Type</TableHead>
-              <TableHead>Permissions</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead
                 className="cursor-pointer"
                 onClick={() => handleSort("createdAt")}
@@ -242,14 +223,14 @@ export function DonationsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredDonations.length === 0 ? (
+            {currentItems.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
                   No donations found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredDonations.map((donation) => (
+              currentItems.map((donation) => (
                 <TableRow key={donation.id}>
                   <TableCell className="font-medium">
                     {donation.specialId}
@@ -267,32 +248,20 @@ export function DonationsTable() {
                     <Badge variant="outline">{donation.hairTypes}</Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center text-xs">
-                        {donation.allowResale ? (
-                          <Check className="mr-1 h-3 w-3 text-green-500" />
-                        ) : (
-                          <X className="mr-1 h-3 w-3 text-red-500" />
-                        )}
-                        Resale
-                      </div>
-                      <div className="flex items-center text-xs">
-                        {donation.allowWigUse ? (
-                          <Check className="mr-1 h-3 w-3 text-green-500" />
-                        ) : (
-                          <X className="mr-1 h-3 w-3 text-red-500" />
-                        )}
-                        Wig Use
-                      </div>
-                      <div className="flex items-center text-xs">
-                        {donation.wantsConfirmation ? (
-                          <Check className="mr-1 h-3 w-3 text-green-500" />
-                        ) : (
-                          <X className="mr-1 h-3 w-3 text-red-500" />
-                        )}
-                        Confirmation
-                      </div>
-                    </div>
+                    <Badge
+                      variant={
+                        donation.status === "confirmed"
+                          ? "default"
+                          : "secondary"
+                      }
+                      className={
+                        donation.status === "confirmed" ? "bg-green-500" : ""
+                      }
+                    >
+                      {donation.status === "confirmed"
+                        ? "Confirmed"
+                        : "Pending"}
+                    </Badge>
                   </TableCell>
                   <TableCell>{formatDate(donation.createdAt)}</TableCell>
                   <TableCell className="text-right">
@@ -309,8 +278,20 @@ export function DonationsTable() {
                             View details
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Export data</DropdownMenuItem>
-                        <DropdownMenuItem>Send email</DropdownMenuItem>
+                        {donation.status === "pending" && (
+                          <DropdownMenuItem
+                            onClick={() => handleConfirmDonation(donation.id)}
+                          >
+                            Confirm reception
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleSendEmail(donation.id, donation.email)
+                          }
+                        >
+                          Send thank you email
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -321,18 +302,61 @@ export function DonationsTable() {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 py-4">
         <div className="text-sm text-muted-foreground">
-          Showing{" "}
-          <span className="font-medium">{filteredDonations.length}</span> of{" "}
-          <span className="font-medium">{donations.length}</span> donations
+          Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
+          <span className="font-medium">
+            {Math.min(indexOfLastItem, filteredDonations.length)}
+          </span>{" "}
+          of <span className="font-medium">{filteredDonations.length}</span>{" "}
+          donations
         </div>
-        <Button variant="outline" size="sm" disabled={true}>
-          Previous
-        </Button>
-        <Button variant="outline" size="sm" disabled={true}>
-          Next
-        </Button>
+
+        <div className="flex items-center space-x-2">
+          <Select
+            value={itemsPerPage.toString()}
+            onValueChange={(value) => {
+              setItemsPerPage(Number(value));
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="w-[70px]">
+              <SelectValue placeholder="5" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="sr-only">Previous page</span>
+          </Button>
+
+          <div className="text-sm font-medium">
+            Page {currentPage} of {totalPages || 1}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages || totalPages === 0}
+          >
+            <ChevronRight className="h-4 w-4" />
+            <span className="sr-only">Next page</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

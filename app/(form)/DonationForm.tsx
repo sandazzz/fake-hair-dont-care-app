@@ -76,7 +76,7 @@ export default function DonationForm() {
   };
 
   return (
-    <Form {...form}>
+    <Form {...form} >
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 max-w-xl"

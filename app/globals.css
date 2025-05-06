@@ -120,3 +120,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .clip-circle-right {
+    clip-path: circle(35% at right 70%);
+  }
+
+  .clip-circle-left {
+    clip-path: circle(30% at 10% 10%);
+  }
+}
