@@ -7,7 +7,7 @@ const states = ["pending", "confirmed"];
 
 async function seedDonations() {
   console.log("Seeding donations...");
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 60; i++) {
     const civility = faker.helpers.arrayElement(civilities);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
