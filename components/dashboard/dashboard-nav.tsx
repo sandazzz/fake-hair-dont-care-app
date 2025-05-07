@@ -14,7 +14,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
 export function DashboardNav() {
@@ -29,11 +29,13 @@ export function DashboardNav() {
   ];
 
   const handleLogout = async () => {
-    // In a real app, this would call your logout API
-    console.log("Logging out...");
-    // Then redirect to login page
-    await authClient.signOut();
-    router.push("/sign-in");
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/sign-in"); // redirect to login page
+        },
+      },
+    });
   };
 
   return (
@@ -63,7 +65,7 @@ export function DashboardNav() {
       <SidebarFooter>
         <Button
           variant="ghost"
-          className="w-full justify-start"
+          className="w-full justify-start cursor-pointer"
           onClick={handleLogout}
         >
           <LogOut className="mr-2 h-4 w-4" />
