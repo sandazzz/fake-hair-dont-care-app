@@ -35,6 +35,7 @@ export const sendDonation = action
           wantsConfirmation: wantsConfirmation,
           message: message,
           specialId: specialId,
+          status: "pending",
         },
       });
 
