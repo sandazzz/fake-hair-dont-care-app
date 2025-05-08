@@ -1,10 +1,8 @@
 import { DonationDetails } from "@/components/dashboard/donation-details";
-
-export default async function DonationDetailsPage({
-  params,
-}: {
+interface PageProps {
   params: { id: string };
-}) {
+}
+export default async function DonationDetailsPage({ params }: PageProps) {
   const { id } = await params;
   return <DonationDetails id={id} />;
 }
