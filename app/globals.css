@@ -130,3 +130,24 @@
     clip-path: circle(30% at 10% 10%);
   }
 }
+
+
+/* Custom styles for the donations table */
+.donations-table-container {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.donations-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Make sure the table takes up all available space */
+@media (min-width: 1024px) {
+  .dashboard-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: 100%;
+  }
+}
