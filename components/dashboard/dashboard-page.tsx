@@ -17,7 +17,7 @@ export async function DashboardPage() {
         heading="Hair Donations Dashboard"
         text="Manage and view all hair donations"
       />
-      <div className="mt-6">
+      <div className="mt-6 w-full">
         <DonationsTable donationsList={donations} />
       </div>
     </DashboardShell>
