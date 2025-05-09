@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import type { Donation } from "@/generated/prisma";
+import type { Donation } from "@prisma/client";
 import { fetchDonationsPage } from "@/app/dashboard/switch-donation.action";
 import {
   Tooltip,
