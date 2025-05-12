@@ -11,11 +11,11 @@ export const hairTypesEnum = z.enum([
 ]);
 
 export const DonationSchema = z.object({
-  civility: z.enum(["monsieur", "madame"]),
+  civility: z.enum(["monsieur", "madame"]).nullable(),
   firstName: z.string(),
   lastName: z.string(),
-  age: z.number().int().optional(),
-  hairTypes: hairTypesEnum,
+  age: z.number().nullable(),
+  hairTypes: hairTypesEnum.optional(),
   email: z.string().email(),
   allowResale: z.boolean().default(false),
   allowWigUse: z.boolean().default(false),

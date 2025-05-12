@@ -33,21 +33,25 @@ import {
   DonationSchema,
   hairTypesEnum,
 } from "@/schemas/donation";
+import { useState } from "react";
 
 export default function DonationForm() {
   const form = useForm<DonationInput, undefined, DonationOutput>({
     resolver: zodResolver(DonationSchema),
     defaultValues: {
+      civility: null,
       firstName: "",
       lastName: "",
-      age: undefined,
+      age: null,
+      hairTypes: undefined,
       email: "",
-      // ⚠️ pas de undefined: laisser le champ absent ou mettre null/"" si le composant le supporte
       allowResale: false,
       allowWigUse: false,
       wantsConfirmation: false,
+      message: "",
     },
   });
+  const [selectKey, setSelectKey] = useState(0);
 
   const onSubmit = async (data: DonationOutput) => {
     console.table(data);
@@ -72,11 +76,23 @@ export default function DonationForm() {
       description: "Merci pour votre contribution !",
     });
 
-    form.reset();
+    form.reset({
+      civility: null,
+      firstName: "",
+      lastName: "",
+      age: null,
+      hairTypes: undefined,
+      email: "",
+      allowResale: false,
+      allowWigUse: false,
+      wantsConfirmation: false,
+      message: "",
+    });
+    setSelectKey((prev) => prev + 1); // changer la clé pour forcer le remount
   };
 
   return (
-    <Form {...form} >
+    <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 max-w-xl"
@@ -91,7 +107,7 @@ export default function DonationForm() {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value ?? ""}
                   className="flex gap-6"
                 >
                   <div className="flex items-center space-x-2">
@@ -151,10 +167,10 @@ export default function DonationForm() {
                 <Input
                   type="number"
                   {...field}
-                  value={field.value === undefined ? "" : field.value}
+                  value={field.value ?? ""}
                   onChange={(e) =>
                     field.onChange(
-                      e.target.value === "" ? undefined : Number(e.target.value)
+                      e.target.value === "" ? null : Number(e.target.value)
                     )
                   }
                 />
@@ -164,14 +180,17 @@ export default function DonationForm() {
           )}
         />
 
-        {/* Type de cheveux --------------------------------------------- */}
         <Controller
           control={form.control}
           name="hairTypes"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Type de cheveux</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                key={selectKey}
+                value={field.value ?? undefined}
+                onValueChange={field.onChange}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Choisir un type..." />

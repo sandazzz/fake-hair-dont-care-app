@@ -62,10 +62,28 @@ US4 – As a donor
 I want to see a confirmation popup once I submit the form
 So that I know my submission has been successfully sent.
 
+US5 - As a donor
+I want a confirmation email with a message, the information of the donation and the order number composed with and id, the date (05-25, MM-YY) and a string.
+If the email is not send, then I want a popup that tell me that the email does not exist.
+
+Special details : 
+
+Civility is optional,
+If the donor needs to be Anonymous, he can pull a xxx as surname and name
+
+Age is optional
+
+Put these message on the form : 
+
+*Nous acceptons les mèches dès 10cm, de toute nature de cheveux, tant qu’ils sont en bonne santé 
+Nature des cheveux.
+
+*Vous pouvez cocher l’une d’entre elles ou les deux. Votre choix sera entièrement respecté.
+
 	User Stories – Admin (Association)
 
 US5 – As an admin
-I want to log in using an email and password (or via OAuth)
+I want to log in using an email and password
 So that access to the dashboard is secure.
 
 US6 – As an admin
