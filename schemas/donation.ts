@@ -14,12 +14,13 @@ export const DonationSchema = z.object({
   civility: z.enum(["monsieur", "madame"]).nullable(),
   firstName: z.string(),
   lastName: z.string(),
-  age: z.number().nullable(),
-  hairTypes: hairTypesEnum.optional(),
+  age: z.number().optional(),
+  hairTypes: z.string({
+    required_error: "Choisissez un type de cheveux.",
+  }),
   email: z.string().email(),
   allowResale: z.boolean().default(false),
   allowWigUse: z.boolean().default(false),
-  wantsConfirmation: z.boolean().default(false),
   message: z.string().optional(),
 });
 

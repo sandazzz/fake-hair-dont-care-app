@@ -4,91 +4,42 @@ import { action } from "@/lib/safe-action";
 import { DonationSchema } from "@/schemas/donation";
 import { prisma } from "@/lib/prisma";
 import { generateSpecialId } from "@/lib/random";
-import nodemailer from "nodemailer";
-
-type EmailData = {
-  to: string;
-  name: string;
-};
+import { sendThankYouEmail } from "./send-confirmation-mail";
 
 export const sendDonation = action
   .schema(DonationSchema)
-  .action(
-    async ({
-      parsedInput: {
-        civility,
-        firstName,
-        lastName,
-        age,
-        hairTypes,
-        email,
-        allowResale,
-        allowWigUse,
-        wantsConfirmation,
-        message,
-      },
-    }) => {
-      const sexe = civility ?? "";
+  .action(async ({ parsedInput }) => {
+    try {
       const specialId = generateSpecialId();
+
+      const mail = await sendThankYouEmail({
+        lastName: parsedInput.lastName,
+        firstName: parsedInput.firstName,
+        age: parsedInput.age,
+        hairType: parsedInput.hairTypes,
+        email: parsedInput.email,
+        allowResale: parsedInput.allowResale,
+        allowWigUse: parsedInput.allowWigUse,
+        message: parsedInput.message,
+        specialId,
+      });
+
+      if (!mail.success) {
+        return { success: false, error: mail.error };
+      }
+
       await prisma.donation.create({
         data: {
-          civility: sexe,
-          firstName: firstName,
-          lastName: lastName,
-          age: age,
-          hairTypes: hairTypes,
-          email: email,
-          allowResale: allowResale,
-          allowWigUse: allowWigUse,
-          wantsConfirmation: wantsConfirmation,
-          message: message,
-          specialId: specialId,
+          ...parsedInput,
+          civility: parsedInput.civility ?? "",
+          specialId,
           status: "pending",
         },
       });
-      console.log(specialId);
-      sendThankYouEmail({
-        to: "sandarisoarakotovelo@gmail.com",
-        name: "Sanda",
-      });
+
       return { success: true };
+    } catch (err: any) {
+      console.error("Erreur dans sendDonation:", err);
+      return { success: false, error: "Une erreur interne est survenue." };
     }
-  );
-
-async function sendThankYouEmail({
-  to,
-  name,
-}: EmailData): Promise<{ success: boolean; error?: string }> {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    tls: {
-      rejectUnauthorized: false, // <<< ignore les certificats auto-signés
-    },
   });
-
-  const mailOptions = {
-    from: `"MaDons" <${process.env.EMAIL_USER}>`,
-    to,
-    subject: "Merci pour votre don 🙏",
-    text: `Bonjour ${name},
-
-Merci infiniment pour votre don.
-
-Nous apprécions grandement votre générosité. Ce geste contribue réellement à notre mission.
-
-Bien cordialement,
-L'équipe MaDons`,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    return { success: true };
-  } catch (error: any) {
-    console.error("Erreur envoi mail :", error);
-    return { success: false, error: error.message };
-  }
-}
