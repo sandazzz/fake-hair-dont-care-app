@@ -24,7 +24,9 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { sendDonation } from "./send-donation.action";
 import {
@@ -34,10 +36,11 @@ import {
 } from "@/schemas/donation";
 
 export default function DonationForm() {
+  const router = useRouter();
+
   const form = useForm<DonationInput, undefined, DonationOutput>({
     resolver: zodResolver(DonationSchema),
     defaultValues: {
-      civility: null,
       firstName: "",
       lastName: "",
       age: undefined,
@@ -52,44 +55,44 @@ export default function DonationForm() {
   const onSubmit = async (data: DonationOutput) => {
     console.table(data);
 
-    // const result = await sendDonation(data);
+    const result = await sendDonation(data);
 
-    // if (result?.serverError) {
-    //   toast.error("Erreur serveur", {
-    //     description: "Une erreur est survenue lors de l'envoi du formulaire.",
-    //   });
-    //   return;
-    // }
+    if (result?.serverError) {
+      toast.error("Erreur serveur", {
+        description: "Une erreur est survenue lors de l'envoi du formulaire.",
+      });
+      return;
+    }
 
-    // if (result?.validationErrors) {
-    //   toast.error("Erreur de validation", {
-    //     description: "Veuillez vérifier les champs du formulaire.",
-    //   });
-    //   return;
-    // }
+    if (result?.validationErrors) {
+      toast.error("Erreur de validation", {
+        description: "Veuillez vérifier les champs du formulaire.",
+      });
+      return;
+    }
 
-    // toast.success("Don enregistré", {
-    //   description: "Merci pour votre contribution !",
-    // });
-
-    form.reset({
-      civility: null,
-      firstName: "",
-      lastName: "",
-      age: undefined,
-      hairTypes: "",
-      email: "",
-      allowResale: false,
-      allowWigUse: false,
-      message: "",
+    toast.success("Don enregistré", {
+      description: (
+        <span className="text-black">
+          Merci pour votre contribution ! Vous allez avoir un email avec le
+          récapitulatif de votre don, veuillez vérifier votre boite mail.
+        </span>
+      ),
     });
+
+    form.reset();
+
+    const id = result?.data?.data;
+    if (result?.data) {
+      router.push(`/confirmation/${id}`);
+    }
   };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 max-w-xl"
+        className="space-y-6 max-w-xl "
       >
         {/* Civilité ---------------------------------------------------- */}
         <FormField
@@ -97,7 +100,7 @@ export default function DonationForm() {
           name="civility"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="uppercase text-pink-700 font-medium text-sm">
+              <FormLabel className="uppercase text-input-title-foreground  font-medium text-sm">
                 Vous êtes :{" "}
               </FormLabel>
               <FormControl>
@@ -128,11 +131,11 @@ export default function DonationForm() {
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="uppercase text-pink-700 font-medium text-sm">
+                <FormLabel className="uppercase text-input-title-foreground font-medium text-sm">
                   Prénom
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Jean" {...field} />
+                  <Input className="rounded-none" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -144,11 +147,11 @@ export default function DonationForm() {
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="uppercase text-pink-700 font-medium text-sm">
+                <FormLabel className="uppercase text-input-title-foreground  font-medium text-sm">
                   Nom
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Dupont" {...field} />
+                  <Input className="rounded-none" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -162,11 +165,12 @@ export default function DonationForm() {
           name="age"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="uppercase text-pink-700 font-medium text-sm">
+              <FormLabel className="uppercase text-input-title-foreground font-medium text-sm">
                 Âge
               </FormLabel>
               <FormControl>
                 <Input
+                  className="rounded-none"
                   type="number"
                   {...field}
                   value={field.value ?? ""}
@@ -188,7 +192,11 @@ export default function DonationForm() {
           name="hairTypes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="uppercase text-pink-700 font-medium text-sm">
+              <FormDescription className="text-xs text-muted-foreground mt-1 font-bold">
+                Nous acceptons les mèches dès 10cm, de toute nature de cheveux,
+                tant qu’ils sont en bonne santé.
+              </FormDescription>
+              <FormLabel className="uppercase text-input-title-foreground  font-medium text-sm">
                 Type de cheveux
               </FormLabel>
               <Select
@@ -197,7 +205,7 @@ export default function DonationForm() {
                 value={field.value ?? ""}
               >
                 <FormControl>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full rounded-none">
                     <SelectValue placeholder="Choisir un type..." />
                   </SelectTrigger>
                 </FormControl>
@@ -219,40 +227,36 @@ export default function DonationForm() {
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
-        {/* Email -------------------------------------------------------- */}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="uppercase text-pink-700 font-medium text-sm">
-                Email
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="jean.dupont@mail.com"
-                  {...field}
-                />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
         {/* Autorisations ----------------------------------------------- */}
-        <div className="flex flex-col gap-2">
+        <Card className="p-4 space-y-4 bg-muted/50 rounded-none">
+          <div>
+            <p className="font-medium text-black text-sm mb-2">
+              Acceptez-vous que l’on revende vos mèches ?*
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Vous avez la possibilité de nous autoriser à vendre vos cheveux ou
+              à les utiliser uniquement pour la fabrication de perruque.
+              <br /> Si vous cochez la case « j’accepte que mes cheveux soient
+              vendus », les fruits de la vente permettront d’offrir une aide
+              financière aux personnes souhaitant acheter une perruque chez
+              nous.
+            </p>
+          </div>
+        </Card>
+
+        <div className="mt-4 space-y-2">
           {/* allowResale */}
           <FormField
             control={form.control}
             name="allowResale"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormItem className="flex items-start space-x-3">
                 <FormControl>
                   <Checkbox
                     id="allowResale"
@@ -274,7 +278,7 @@ export default function DonationForm() {
             control={form.control}
             name="allowWigUse"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormItem className="flex items-start space-x-3">
                 <FormControl>
                   <Checkbox
                     id="allowWigUse"
@@ -290,21 +294,48 @@ export default function DonationForm() {
               </FormItem>
             )}
           />
+          <p className="text-xs italic text-muted-foreground mt-2">
+            Vous pouvez cocher l’une d’entre elles ou les deux. Votre choix sera
+            entièrement respecté.
+          </p>
         </div>
 
+        {/* Email -------------------------------------------------------- */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="uppercase text-input-title-foreground  font-medium text-sm">
+                Email
+              </FormLabel>
+              <FormControl>
+                <Input className="rounded-none" type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+              <FormDescription className="text-xs text-muted-foreground mt-1 font-bold">
+                Nous faisons notre possible pour répondre à toutes et tous.
+                Merci de ne pas nous tenir rigueur des erreurs de la poste ou
+                des éventuelles fautes de frappes dans votre adresse mail ou
+                téléphone.
+              </FormDescription>
+            </FormItem>
+          )}
+        />
         {/* Message ------------------------------------------------------ */}
         <FormField
           control={form.control}
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="uppercase text-pink-700 font-medium text-sm">
-                Message (facultatif)
+              <FormLabel className="uppercase text-input-title-foreground  font-medium text-sm">
+                Merci pour vos réponses et votre engagement ! <br />
+                Un message à nous faire passer ?
               </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Votre message…"
-                  className="min-h-[120px]"
+                  className="min-h-[120px] rounded-none"
                   {...field}
                 />
               </FormControl>
@@ -318,7 +349,7 @@ export default function DonationForm() {
 
         <Button
           type="submit"
-          className="w-full bg-pink-700 text-white hover:bg-pink-800 transition"
+          className="w-full rounded-none bg-pink-700 text-white hover:bg-pink-800 transition"
         >
           Envoyer ma promesse de don
         </Button>

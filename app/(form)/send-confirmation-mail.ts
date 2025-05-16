@@ -1,5 +1,5 @@
-import nodemailer from "nodemailer";
 import { env } from "@/lib/env";
+import { transporter } from "@/lib/transporter";
 
 type EmailData = {
   lastName: string;
@@ -28,22 +28,7 @@ export async function sendThankYouEmail(
     specialId,
   } = data;
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: env.EMAIL_USER,
-      pass: env.EMAIL_PASS,
-    },
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
-
-  const mailOptions = {
-    from: `"Fake Hair Don't Care" <${env.EMAIL_USER}>`,
-    to: email,
-    subject: "Merci pour votre don – Récapitulatif de votre promesse",
-    text: `Bonjour ${firstName} ${lastName},
+  const text = `Bonjour ${firstName} ${lastName},
 
 Nous vous remercions sincèrement pour votre promesse de don !
 
@@ -60,7 +45,13 @@ Voici le récapitulatif de votre don :
 Nous apprécions profondément votre geste. Votre don contribue à redonner espoir et confiance aux personnes qui en ont besoin.
 
 Bien cordialement,
-L'équipe Fake Hair Don't Care`,
+L'équipe Fake Hair Don't Care`;
+
+  const mailOptions = {
+    from: `"Fake Hair Don't Care" <${env.EMAIL_USER}>`,
+    to: email,
+    subject: "Merci pour votre don – Récapitulatif de votre promesse",
+    text: text,
   };
 
   try {

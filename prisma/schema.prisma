@@ -23,7 +23,7 @@ model Donation {
   allowWigUse       Boolean  @default(false)
   wantsConfirmation Boolean  @default(false)
   message           String?
-  specialId         String
+  specialId         String  @unique
   status            String
   createdAt         DateTime @default(now())
 }

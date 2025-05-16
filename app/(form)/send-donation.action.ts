@@ -5,6 +5,7 @@ import { DonationSchema } from "@/schemas/donation";
 import { prisma } from "@/lib/prisma";
 import { generateSpecialId } from "@/lib/random";
 import { sendThankYouEmail } from "./send-confirmation-mail";
+import { formatName } from "@/lib/format-name";
 
 export const sendDonation = action
   .schema(DonationSchema)
@@ -13,8 +14,8 @@ export const sendDonation = action
       const specialId = generateSpecialId();
 
       const mail = await sendThankYouEmail({
-        lastName: parsedInput.lastName,
-        firstName: parsedInput.firstName,
+        lastName: formatName(parsedInput.lastName),
+        firstName: formatName(parsedInput.firstName),
         age: parsedInput.age,
         hairType: parsedInput.hairTypes,
         email: parsedInput.email,
@@ -23,12 +24,12 @@ export const sendDonation = action
         message: parsedInput.message,
         specialId,
       });
-
+      // Conditon non fonctionnel !!!
       if (!mail.success) {
         return { success: false, error: mail.error };
       }
 
-      await prisma.donation.create({
+      const donation = await prisma.donation.create({
         data: {
           ...parsedInput,
           civility: parsedInput.civility ?? "",
@@ -37,7 +38,9 @@ export const sendDonation = action
         },
       });
 
-      return { success: true };
+      console.log(donation.specialId);
+
+      return { success: true, data: donation.specialId };
     } catch (err: any) {
       console.error("Erreur dans sendDonation:", err);
       return { success: false, error: "Une erreur interne est survenue." };
