@@ -57,8 +57,13 @@ L'équipe Fake Hair Don't Care`;
   try {
     await transporter.sendMail(mailOptions);
     return { success: true };
-  } catch (error: any) {
-    console.error("Erreur envoi mail :", error);
-    return { success: false, error: error.message };
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Erreur envoi mail :", error);
+      return { success: false, error: error.message };
+    } else {
+      console.error("Erreur inconnue :", error);
+      return { success: false, error: "Une erreur inconnue est survenue." };
+    }
   }
 }
