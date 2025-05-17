@@ -41,8 +41,13 @@ export const sendDonation = action
       console.log(donation.specialId);
 
       return { success: true, data: donation.specialId };
-    } catch (err: any) {
-      console.error("Erreur dans sendDonation:", err);
-      return { success: false, error: "Une erreur interne est survenue." };
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Erreur dans sendDonation:", err);
+        return { success: false, error: err.message };
+      } else {
+        console.error("Erreur inconnue dans sendDonation:", err);
+        return { success: false, error: "Une erreur interne est survenue." };
+      }
     }
   });
