@@ -1,4 +1,3 @@
-import type React from "react";
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
 import {
   Sidebar,
@@ -7,18 +6,20 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
-interface DashboardShellProps {
+export default function DashboardShell({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-export function DashboardShell({ children }: DashboardShellProps) {
+}) {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen flex-col">
         <div className="flex flex-1">
           <Sidebar>
             <SidebarHeader className="flex h-14 items-center border-b px-4">
-              <span className="font-semibold">Hair Donation Management</span>
+              <span className="font-semibold">
+                Fake Hair Don't Care
+              </span>
             </SidebarHeader>
             <SidebarContent>
               <DashboardNav />

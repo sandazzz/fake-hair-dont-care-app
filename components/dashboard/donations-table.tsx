@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Label } from "@radix-ui/react-label";
+import { Input } from "../ui/input";
+
+const formatDate = (date: Date) =>
+  new Date(date).toLocaleDateString("fr-FR", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 
 export function DonationsTable({
   donationsList,
@@ -30,32 +39,37 @@ export function DonationsTable({
 }) {
   const router = useRouter();
   const [donations, setDonations] = useState<Donation[]>(donationsList);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const [inputValue, setInputValue] = useState<string>("");
 
-  const formatDate = (date: Date) =>
-    new Date(date).toLocaleDateString("fr-FR", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 20;
 
-  const handlePageChange = async (nextPage: number) => {
-    const newData = await fetchDonationsPage(
-      (nextPage - 1) * itemsPerPage,
-      itemsPerPage
-    );
-    setDonations(newData); // écrase les anciens dons
-    setCurrentPage(nextPage);
-  };
-
-  const goToDetails = (id: string) => {
-    router.push(`/dashboard/${id}`);
-  };
+  // const handlePageChange = async (nextPage: number) => {
+  //   const newData = await fetchDonationsPage(
+  //     (nextPage - 1) * itemsPerPage,
+  //     itemsPerPage
+  //   );
+  //   setDonations(newData); // écrase les anciens dons
+  //   setCurrentPage(nextPage);
+  // };
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-center gap-2 py-4">
+      <div className="flex items-center gap-2">
+        <Label htmlFor="controlled-input" className="sr-only">
+          Rechercher un don
+        </Label>
+        <Input
+          id="controlled-input"
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Rechercher un don..."
+          className="w-full"
+        />
+      </div>
+
+      {/* <div className="flex items-center gap-2 py-4">
         <Button
           variant="outline"
           size="sm"
@@ -75,7 +89,7 @@ export function DonationsTable({
           <ChevronRight className="h-4 w-4" />
           <span className="sr-only">Page suivante</span>
         </Button>
-      </div>
+      </div> */}
 
       <div className="w-full rounded-md border overflow-x-auto">
         <div className="min-w-full inline-block align-middle">
@@ -115,7 +129,7 @@ export function DonationsTable({
                     <TableRow
                       key={donation.id}
                       className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => goToDetails(donation.id)}
+                      onClick={(id) => router.push(`/dashboard/${id}`)}
                     >
                       <TableCell className="px-2 py-4 whitespace-nowrap text-sm font-medium">
                         {donation.specialId}
@@ -197,10 +211,12 @@ export function DonationsTable({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
-                          onClick={() => goToDetails(donation.id)}
+                          className="h-8 w-8 cursor-pointer"
+                          onClick={() =>
+                            router.push(`/dashboard/${donation.id}`)
+                          }
                         >
-                          <Eye className="h-4 w-4" />
+                          <Info className="h-4 w-4" />
                           <span className="sr-only">View details</span>
                         </Button>
                       </TableCell>

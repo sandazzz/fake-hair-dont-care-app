@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, LogOut } from "lucide-react";
+import { BarChart3, LogOut, Users } from "lucide-react";
 
 import {
   SidebarMenu,
@@ -26,13 +26,18 @@ export function DashboardNav() {
       href: "/dashboard",
       icon: BarChart3,
     },
+    {
+      title: "Gestion des utilisateurs",
+      href: "/dashboard/users",
+      icon: Users,
+    },
   ];
 
   const handleLogout = async () => {
     await signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/sign-in"); // redirect to login page
+          router.push("/login"); // redirect to login page
         },
       },
     });
