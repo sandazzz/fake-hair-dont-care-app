@@ -1,7 +1,7 @@
 "use server";
 
 import { action } from "@/lib/safe-action";
-import { DonationSchema } from "@/schemas/donation";
+import { DonationSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { generateSpecialId } from "@/lib/random";
 import { sendThankYouEmail } from "./send-confirmation-mail";

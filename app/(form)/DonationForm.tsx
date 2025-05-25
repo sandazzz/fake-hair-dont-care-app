@@ -33,7 +33,7 @@ import {
   DonationInput,
   DonationOutput,
   DonationSchema,
-} from "@/schemas/donation";
+} from "@/lib/schemas";
 
 export default function DonationForm() {
   const router = useRouter();
