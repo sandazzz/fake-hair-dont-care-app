@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
+import { Info, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -15,15 +15,17 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { Donation } from "@prisma/client";
-import { fetchDonationsPage } from "@/app/dashboard/switch-donation.action";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Label } from "@radix-ui/react-label";
-import { Input } from "../ui/input";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+
+import { useAction } from "next-safe-action/hooks";
+import { searchDonation } from "@/app/dashboard/search-donation.action";
 
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString("fr-FR", {
@@ -40,18 +42,50 @@ export function DonationsTable({
   const router = useRouter();
   const [donations, setDonations] = useState<Donation[]>(donationsList);
   const [inputValue, setInputValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { executeAsync } = useAction(searchDonation);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const itemsPerPage = 20;
+  // Fonction de recherche avec debounce
+  const debouncedSearch = useCallback(
+    async (query: string) => {
+      setIsLoading(true);
+      try {
+        const result = await executeAsync({ query });
+        if (result?.data) {
+          setDonations(result.data);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [executeAsync]
+  );
 
-  // const handlePageChange = async (nextPage: number) => {
-  //   const newData = await fetchDonationsPage(
-  //     (nextPage - 1) * itemsPerPage,
-  //     itemsPerPage
-  //   );
-  //   setDonations(newData); // écrase les anciens dons
-  //   setCurrentPage(nextPage);
-  // };
+  // Gestionnaire de changement avec debounce
+  const handleSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setInputValue(value);
+
+      // Annuler le timeout précédent s'il existe
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      // Si l'input est vide, réinitialiser la liste
+      if (!value.trim()) {
+        setDonations(donationsList);
+        return;
+      }
+
+      // Créer un nouveau timeout
+      timeoutRef.current = setTimeout(() => {
+        debouncedSearch(value);
+      }, 2000);
+    },
+    [debouncedSearch, donationsList]
+  );
 
   return (
     <div className="w-full space-y-4">
@@ -63,33 +97,11 @@ export function DonationsTable({
           id="controlled-input"
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={handleSearch}
           placeholder="Rechercher un don..."
           className="w-full"
         />
       </div>
-
-      {/* <div className="flex items-center gap-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Page précédente</span>
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={donations.length === 0}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">Page suivante</span>
-        </Button>
-      </div> */}
 
       <div className="w-full rounded-md border overflow-x-auto">
         <div className="min-w-full inline-block align-middle">
@@ -118,10 +130,18 @@ export function DonationsTable({
                 </TableRow>
               </TableHeader>
               <TableBody className="bg-white divide-y divide-gray-200">
-                {donations.length === 0 ? (
+                {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
-                      No donations found.
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : donations.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                      Aucun don trouvé.
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -197,8 +217,8 @@ export function DonationsTable({
                           }
                         >
                           {donation.status === "confirmed"
-                            ? "Confirmed"
-                            : "Pending"}
+                            ? "Confirmé"
+                            : "En attente"}
                         </Badge>
                       </TableCell>
                       <TableCell className="px-2 py-4 whitespace-nowrap text-sm">
@@ -217,7 +237,7 @@ export function DonationsTable({
                           }
                         >
                           <Info className="h-4 w-4" />
-                          <span className="sr-only">View details</span>
+                          <span className="sr-only">Voir les détails</span>
                         </Button>
                       </TableCell>
                     </TableRow>
