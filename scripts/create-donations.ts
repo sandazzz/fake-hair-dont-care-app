@@ -32,7 +32,6 @@ async function seedDonations(count: number = 60) {
       const hairTypes = faker.helpers.arrayElement(hairTypesEnum.options);
       const allowResale = faker.datatype.boolean();
       const allowWigUse = faker.datatype.boolean();
-      const wantsConfirmation = faker.datatype.boolean();
       const message = faker.lorem.paragraph();
       const specialId = generateSpecialId();
       const status = faker.helpers.arrayElement(states);
@@ -48,7 +47,6 @@ async function seedDonations(count: number = 60) {
           hairTypes,
           allowResale,
           allowWigUse,
-          wantsConfirmation,
           message,
           specialId,
           status,
