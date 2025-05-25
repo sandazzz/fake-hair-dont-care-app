@@ -4,44 +4,48 @@ import { MONTHS } from "@/components/dashboard/stats/constants";
 
 export default async function StatsPage() {
   // Récupération des données avec agrégation côté serveur
-  const [donations, hairTypesStats, permissionsStats, monthlyStats] =
-    await Promise.all([
-      // Données de base pour les autres calculs
-      prisma.donation.findMany({
-        select: {
-          id: true,
-          createdAt: true,
-          status: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
-      // Agrégation des types de cheveux
-      prisma.donation.groupBy({
-        by: ["hairTypes"],
-        _count: {
-          hairTypes: true,
-        },
-      }),
-      // Agrégation des permissions
-      prisma.donation.groupBy({
-        by: ["allowResale", "allowWigUse"],
-        _count: {
-          _all: true,
-        },
-      }),
-      // Agrégation mensuelle
-      prisma.donation.groupBy({
-        by: ["createdAt"],
-        _count: {
-          _all: true,
-        },
-      }),
-    ]);
-
-  // Transformation des données pour les composants
-  const totalDonations = donations.length;
+  const [
+    donations,
+    hairTypesStats,
+    permissionsStats,
+    monthlyStats,
+    totalDonations,
+  ] = await Promise.all([
+    // Données de base pour les autres calculs
+    prisma.donation.findMany({
+      select: {
+        id: true,
+        createdAt: true,
+        status: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+    // Agrégation des types de cheveux
+    prisma.donation.groupBy({
+      by: ["hairTypes"],
+      _count: {
+        hairTypes: true,
+      },
+    }),
+    // Agrégation des permissions
+    prisma.donation.groupBy({
+      by: ["allowResale", "allowWigUse"],
+      _count: {
+        _all: true,
+      },
+    }),
+    // Agrégation mensuelle
+    prisma.donation.groupBy({
+      by: ["createdAt"],
+      _count: {
+        _all: true,
+      },
+    }),
+    // Nombre total de dons
+    prisma.donation.count(),
+  ]);
 
   const hairTypesData = hairTypesStats.map(({ hairTypes, _count }) => ({
     name: hairTypes,
