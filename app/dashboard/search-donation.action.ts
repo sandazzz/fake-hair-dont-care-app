@@ -18,8 +18,6 @@ export const searchDonation = action
       throw new Error("Non autorisé");
     }
 
-    console.log(session.user.email);
-
     const donations = await prisma.donation.findMany({
       where: {
         OR: [
