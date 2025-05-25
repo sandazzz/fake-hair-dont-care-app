@@ -17,9 +17,7 @@ export default function DashboardShell({
         <div className="flex flex-1">
           <Sidebar>
             <SidebarHeader className="flex h-14 items-center border-b px-4">
-              <span className="font-semibold">
-                Fake Hair Don't Care
-              </span>
+              <span className="font-semibold">Fake Hair Don&apos;t Care</span>
             </SidebarHeader>
             <SidebarContent>
               <DashboardNav />
