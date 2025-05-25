@@ -38,8 +38,6 @@ export const sendDonation = action
         },
       });
 
-      console.log(donation.specialId);
-
       return { success: true, data: donation.specialId };
     } catch (err: unknown) {
       if (err instanceof Error) {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, LogOut, Users } from "lucide-react";
+import { BarChart3, ChartArea, LogOut, Users } from "lucide-react";
 
 import {
   SidebarMenu,
@@ -30,6 +30,11 @@ export function DashboardNav() {
       title: "Gestion des utilisateurs",
       href: "/dashboard/users",
       icon: Users,
+    },
+    {
+      title: "Statistiques",
+      href: "/dashboard/stats",
+      icon: ChartArea,
     },
   ];
 

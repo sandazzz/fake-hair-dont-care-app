@@ -1,4 +1,6 @@
+import { prisma } from "@/lib/prisma";
 import { DonationDetails } from "@/components/dashboard/donation-details";
+import { notFound } from "next/navigation";
 
 export default async function DonationDetailsPage({
   params,
@@ -6,5 +8,14 @@ export default async function DonationDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  return <DonationDetails id={id} />;
+
+  const donation = await prisma.donation.findUnique({
+    where: { id },
+  });
+
+  if (!donation) {
+    notFound();
+  }
+
+  return <DonationDetails donation={donation} />;
 }

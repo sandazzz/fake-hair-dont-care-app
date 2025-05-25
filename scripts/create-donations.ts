@@ -1,3 +1,4 @@
+//npx tsx scripts/create-donations.ts
 import { prisma } from "@/lib/prisma";
 import { faker } from "@faker-js/faker";
 import { hairTypesEnum } from "@/lib/schemas";
@@ -9,17 +10,17 @@ const states = ["pending", "confirmed"];
 /**
  * Nettoie toutes les donations existantes dans la base de données
  */
-async function cleanDonations() {
-  console.log("Nettoyage des donations existantes...");
-  await prisma.donation.deleteMany({});
-  console.log("Nettoyage terminé!");
-}
+// async function cleanDonations() {
+//   console.log("Nettoyage des donations existantes...");
+//   await prisma.donation.deleteMany({});
+//   console.log("Nettoyage terminé!");
+// }
 
 /**
  * Génère des données de test pour les donations
  * @param count Nombre de donations à générer
  */
-async function seedDonations(count: number = 60) {
+async function seedDonations(count: number = 80000) {
   console.log(`Génération de ${count} donations...`);
 
   try {
@@ -32,7 +33,6 @@ async function seedDonations(count: number = 60) {
       const hairTypes = faker.helpers.arrayElement(hairTypesEnum.options);
       const allowResale = faker.datatype.boolean();
       const allowWigUse = faker.datatype.boolean();
-      const wantsConfirmation = faker.datatype.boolean();
       const message = faker.lorem.paragraph();
       const specialId = generateSpecialId();
       const status = faker.helpers.arrayElement(states);
@@ -48,7 +48,6 @@ async function seedDonations(count: number = 60) {
           hairTypes,
           allowResale,
           allowWigUse,
-          wantsConfirmation,
           message,
           specialId,
           status,
@@ -69,7 +68,7 @@ async function seedDonations(count: number = 60) {
 
 async function main() {
   try {
-    await cleanDonations();
+    //await cleanDonations();
     await seedDonations();
   } catch (error) {
     console.error("Erreur lors de l'exécution du script:", error);
