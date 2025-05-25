@@ -30,6 +30,7 @@ export const sendEmail = action
 
       return { success: true };
     } catch (error) {
+      console.error("Erreur lors de l'envoi de l'email:", error);
       return {
         success: false,
         error: "Une erreur est survenue lors de l'envoi de l'email",

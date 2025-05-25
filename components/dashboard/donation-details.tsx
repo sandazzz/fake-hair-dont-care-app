@@ -68,6 +68,7 @@ export function DonationDetails({ donation }: DonationDetailsProps) {
         });
       }
     } catch (error) {
+      console.error("Erreur lors de la confirmation du don:", error);
       toast.error("Erreur", {
         description: "Une erreur est survenue lors de la confirmation du don",
       });
@@ -105,6 +106,7 @@ export function DonationDetails({ donation }: DonationDetailsProps) {
       });
       setEmailOpen(false);
     } catch (error) {
+      console.error("Erreur lors de l'envoi de l'email:", error);
       toast.error("Erreur", {
         description: "Une erreur est survenue lors de l'envoi de l'email",
       });
@@ -277,7 +279,7 @@ export function DonationDetails({ donation }: DonationDetailsProps) {
                   ) : (
                     <X className="mr-2 h-4 w-4 text-red-500" />
                   )}
-                  <span>Autorise l'utilisation en perruque</span>
+                  <span>Autorise l&apos;utilisation en perruque</span>
                 </div>
               </div>
             </div>

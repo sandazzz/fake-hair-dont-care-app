@@ -42,6 +42,7 @@ export const confirmDonation = action
 
       return { success: true };
     } catch (error) {
+      console.error("Erreur lors de la confirmation du don:", error);
       return {
         success: false,
         error: "Une erreur est survenue lors de la confirmation du don",
