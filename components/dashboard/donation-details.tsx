@@ -2,6 +2,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Mail, Check, X, CheckCircle } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import type { Donation } from "@prisma/client";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +18,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { confirmDonation } from "@/app/dashboard/confirm-donation.action";
+import { sendEmail } from "@/app/dashboard/send-email.action";
 
 import {
   Dialog,
@@ -28,29 +33,11 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-// Mock data - in a real app, this would be fetched from your API
-const getDonation = (id: string) => {
-  return {
-    id,
-    specialId: "HD12345",
-    civility: "madame",
-    firstName: "Marie",
-    lastName: "Dupont",
-    age: 28,
-    hairTypes: "Naturels (non colorés/non décolorés)",
-    email: "marie.dupont@example.com",
-    allowResale: true,
-    allowWigUse: true,
-    wantsConfirmation: true,
-    message:
-      "Je suis heureuse de pouvoir faire ce don et aider quelqu'un qui en a besoin.",
-    status: "pending",
-    createdAt: "2023-09-15T10:30:00Z",
-  };
-};
+interface DonationDetailsProps {
+  donation: Donation;
+}
 
-export function DonationDetails({ id }: { id: string }) {
-  const [donation, setDonation] = useState(getDonation(id));
+export function DonationDetails({ donation }: DonationDetailsProps) {
   const [emailOpen, setEmailOpen] = useState(false);
   const [emailSubject, setEmailSubject] = useState(
     "Merci pour votre don de cheveux"
@@ -58,9 +45,11 @@ export function DonationDetails({ id }: { id: string }) {
   const [emailBody, setEmailBody] = useState(
     `Cher/Chère ${donation.firstName} ${donation.lastName},\n\nNous vous remercions sincèrement pour votre don de cheveux (référence: ${donation.specialId}). Votre générosité permettra d'aider des personnes qui en ont besoin.\n\nCordialement,\nL'équipe de don de cheveux`
   );
+  const { executeAsync: executeConfirmDonation } = useAction(confirmDonation);
+  const { executeAsync: executeSendEmail } = useAction(sendEmail);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("fr-FR", {
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString("fr-FR", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -69,20 +58,57 @@ export function DonationDetails({ id }: { id: string }) {
     });
   };
 
-  const handleConfirmDonation = () => {
-    // In a real app, this would call your API to update the donation status
-    setDonation({ ...donation, status: "confirmed" });
+  const handleConfirmDonation = async () => {
+    try {
+      const result = await executeConfirmDonation({ id: donation.id });
+
+      if (result) {
+        toast.success("Succès", {
+          description: "Le don a été confirmé avec succès",
+        });
+      }
+    } catch (error) {
+      toast.error("Erreur", {
+        description: "Une erreur est survenue lors de la confirmation du don",
+      });
+    }
   };
 
-  const handleSendEmail = () => {
-    // In a real app, this would call your API to send the email
-    console.log("Sending email:", {
-      to: donation.email,
-      subject: emailSubject,
-      body: emailBody,
-    });
-    alert(`Email sent to ${donation.email}`);
-    setEmailOpen(false);
+  const templates = {
+    remerciement: {
+      subject: "Merci pour votre don de cheveux",
+      body: `Cher/Chère ${donation.firstName} ${donation.lastName},\n\nNous vous remercions sincèrement pour votre don de cheveux (référence: ${donation.specialId}). Votre générosité permettra d'aider des personnes qui en ont besoin.\n\nCordialement,\nL'équipe de don de cheveux`,
+    },
+    confirmation: {
+      subject: "Confirmation de réception de votre don",
+      body: `Cher/Chère ${donation.firstName} ${donation.lastName},\n\nNous confirmons la bonne réception de votre don de cheveux (référence: ${donation.specialId}). Nous vous remercions pour votre générosité.\n\nCordialement,\nL'équipe de don de cheveux`,
+    },
+  };
+
+  const handleSendEmail = async () => {
+    try {
+      const result = await executeSendEmail({
+        to: donation.email,
+        subject: emailSubject,
+        body: emailBody,
+      });
+
+      if (result?.data?.error) {
+        toast.error("Erreur", {
+          description: result.data.error,
+        });
+        return;
+      }
+
+      toast.success("Succès", {
+        description: "L'email a été envoyé avec succès",
+      });
+      setEmailOpen(false);
+    } catch (error) {
+      toast.error("Erreur", {
+        description: "Une erreur est survenue lors de l'envoi de l'email",
+      });
+    }
   };
 
   return (
@@ -91,30 +117,50 @@ export function DonationDetails({ id }: { id: string }) {
         <Button variant="outline" size="sm" asChild>
           <Link href="/dashboard">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
+            Retour
           </Link>
         </Button>
         <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
               <Mail className="mr-2 h-4 w-4" />
-              Send Email
+              Envoyer un email
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
-              <DialogTitle>Send Thank You Email</DialogTitle>
+              <DialogTitle>Envoyer un email de remerciement</DialogTitle>
               <DialogDescription>
-                Send a personalized thank you email to the donor.
+                Envoyer un email personnalisé au donateur.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="recipient">Recipient</Label>
+                <Label htmlFor="recipient">Destinataire</Label>
                 <Input id="recipient" value={donation.email} disabled />
               </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setEmailSubject(templates.remerciement.subject);
+                    setEmailBody(templates.remerciement.body);
+                  }}
+                >
+                  Template Remerciement
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setEmailSubject(templates.confirmation.subject);
+                    setEmailBody(templates.confirmation.body);
+                  }}
+                >
+                  Template Confirmation
+                </Button>
+              </div>
               <div className="grid gap-2">
-                <Label htmlFor="subject">Subject</Label>
+                <Label htmlFor="subject">Sujet</Label>
                 <Input
                   id="subject"
                   value={emailSubject}
@@ -133,9 +179,9 @@ export function DonationDetails({ id }: { id: string }) {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setEmailOpen(false)}>
-                Cancel
+                Annuler
               </Button>
-              <Button onClick={handleSendEmail}>Send Email</Button>
+              <Button onClick={handleSendEmail}>Envoyer</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -144,23 +190,21 @@ export function DonationDetails({ id }: { id: string }) {
       <div className="grid gap-6 mt-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Donor Information</CardTitle>
-            <CardDescription>Personal details of the donor</CardDescription>
+            <CardTitle>Informations du donateur</CardTitle>
+            <CardDescription>Détails personnels du donateur</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Name
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Nom</p>
                 <p>
                   {donation.civility === "madame" ? "Mme" : "M."}{" "}
                   {donation.firstName} {donation.lastName}
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Age</p>
-                <p>{donation.age || "Not specified"}</p>
+                <p className="text-sm font-medium text-muted-foreground">Âge</p>
+                <p>{donation.age || "Non spécifié"}</p>
               </div>
             </div>
             <div>
@@ -169,19 +213,19 @@ export function DonationDetails({ id }: { id: string }) {
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Donation ID
+                ID du don
               </p>
               <p>{donation.specialId}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Date of Donation
+                Date du don
               </p>
               <p>{formatDate(donation.createdAt)}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Status
+                Statut
               </p>
               <Badge
                 variant={
@@ -191,7 +235,7 @@ export function DonationDetails({ id }: { id: string }) {
                   donation.status === "confirmed" ? "bg-green-500" : ""
                 }
               >
-                {donation.status === "confirmed" ? "Confirmed" : "Pending"}
+                {donation.status === "confirmed" ? "Confirmé" : "En attente"}
               </Badge>
             </div>
           </CardContent>
@@ -199,13 +243,13 @@ export function DonationDetails({ id }: { id: string }) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Hair Information</CardTitle>
-            <CardDescription>Details about the donated hair</CardDescription>
+            <CardTitle>Informations sur les cheveux</CardTitle>
+            <CardDescription>Détails sur les cheveux donnés</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Hair Type
+                Type de cheveux
               </p>
               <Badge className="mt-1" variant="outline">
                 {donation.hairTypes}
@@ -225,7 +269,7 @@ export function DonationDetails({ id }: { id: string }) {
                   ) : (
                     <X className="mr-2 h-4 w-4 text-red-500" />
                   )}
-                  <span>Allow Resale</span>
+                  <span>Autorise la revente</span>
                 </div>
                 <div className="flex items-center">
                   {donation.allowWigUse ? (
@@ -233,15 +277,7 @@ export function DonationDetails({ id }: { id: string }) {
                   ) : (
                     <X className="mr-2 h-4 w-4 text-red-500" />
                   )}
-                  <span>Allow Wig Use</span>
-                </div>
-                <div className="flex items-center">
-                  {donation.wantsConfirmation ? (
-                    <Check className="mr-2 h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="mr-2 h-4 w-4 text-red-500" />
-                  )}
-                  <span>Wants Confirmation</span>
+                  <span>Autorise l'utilisation en perruque</span>
                 </div>
               </div>
             </div>
@@ -250,7 +286,7 @@ export function DonationDetails({ id }: { id: string }) {
             <CardFooter>
               <Button className="w-full" onClick={handleConfirmDonation}>
                 <CheckCircle className="mr-2 h-4 w-4" />
-                Confirm Donation Reception
+                Confirmer la réception du don
               </Button>
             </CardFooter>
           )}
@@ -259,7 +295,7 @@ export function DonationDetails({ id }: { id: string }) {
         {donation.message && (
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle>Donor Message</CardTitle>
+              <CardTitle>Message du donateur</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="whitespace-pre-wrap">{donation.message}</p>

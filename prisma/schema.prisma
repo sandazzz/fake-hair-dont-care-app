@@ -20,7 +20,6 @@ model Donation {
   email             String
   allowResale       Boolean  @default(false)
   allowWigUse       Boolean  @default(false)
-  wantsConfirmation Boolean  @default(false)
   message           String?
   specialId         String   @unique
   status            String
