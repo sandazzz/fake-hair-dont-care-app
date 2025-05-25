@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, Tooltip, TooltipProps } from "recharts";
 import { Donation } from "@prisma/client";
 import { ResponsiveContainer } from "recharts";
+import { COLORS } from "./constants";
 
 interface HairTypesSectionProps {
   hairTypesData: Array<{
@@ -11,19 +12,10 @@ interface HairTypesSectionProps {
     value: number;
     percentage: number;
   }>;
-  donations: Donation[];
+  donations: Pick<Donation, "id" | "createdAt" | "status">[];
 }
 
 type CustomTooltipProps = TooltipProps<number, string>;
-
-const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884D8",
-  "#82CA9D",
-];
 
 export function HairTypesSection({
   hairTypesData,

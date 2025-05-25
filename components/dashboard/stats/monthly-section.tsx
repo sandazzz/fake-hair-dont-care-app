@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, TooltipProps } from "recharts";
 import { ResponsiveContainer } from "recharts";
 
@@ -16,6 +22,8 @@ interface MonthlySectionProps {
 type CustomTooltipProps = TooltipProps<number, string>;
 
 export function MonthlySection({ monthlyData }: MonthlySectionProps) {
+  const totalDonations = monthlyData.reduce((acc, curr) => acc + curr.count, 0);
+
   const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (
       active &&
@@ -37,9 +45,22 @@ export function MonthlySection({ monthlyData }: MonthlySectionProps) {
 
   return (
     <div className="space-y-8">
-      <Card className="hover:shadow-lg transition-shadow">
+      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-pink-50">
         <CardHeader>
-          <CardTitle>Dons par mois</CardTitle>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Dons par mois</CardTitle>
+              <CardDescription>
+                Nombre de dons enregistrés par mois
+              </CardDescription>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground">Total des dons</p>
+              <p className="text-2xl font-bold text-purple-600">
+                {totalDonations.toLocaleString()}
+              </p>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="h-[400px]">
@@ -71,7 +92,7 @@ export function MonthlySection({ monthlyData }: MonthlySectionProps) {
                   dataKey="count"
                   fill="currentColor"
                   radius={[4, 4, 0, 0]}
-                  className="fill-primary"
+                  className="fill-purple-500"
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -79,15 +100,23 @@ export function MonthlySection({ monthlyData }: MonthlySectionProps) {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid gap-4 md:grid-cols-4 lg:grid-cols-6">
         {monthlyData.map(({ month, count }) => (
-          <Card key={month} className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="text-center">
-                <p className="text-sm font-medium">{month}</p>
-                <p className="text-2xl font-bold mt-2">
-                  {count.toLocaleString()}
-                </p>
+          <Card
+            key={month}
+            className="hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-pink-50"
+          >
+            <CardContent className="p-4">
+              <div className="flex flex-col items-center justify-center space-y-2">
+                <p className="text-sm font-medium text-purple-600">{month}</p>
+                <div className="flex items-baseline gap-1">
+                  <p className="text-2xl font-bold text-purple-700">
+                    {count.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-purple-400">
+                    ({((count / totalDonations) * 100).toFixed(1)}%)
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
