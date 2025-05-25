@@ -4,48 +4,32 @@ import { MONTHS } from "@/components/dashboard/stats/constants";
 
 export default async function StatsPage() {
   // Récupération des données avec agrégation côté serveur
-  const [
-    donations,
-    hairTypesStats,
-    permissionsStats,
-    monthlyStats,
-    totalDonations,
-  ] = await Promise.all([
-    // Données de base pour les autres calculs
-    prisma.donation.findMany({
-      select: {
-        id: true,
-        createdAt: true,
-        status: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-    // Agrégation des types de cheveux
-    prisma.donation.groupBy({
-      by: ["hairTypes"],
-      _count: {
-        hairTypes: true,
-      },
-    }),
-    // Agrégation des permissions
-    prisma.donation.groupBy({
-      by: ["allowResale", "allowWigUse"],
-      _count: {
-        _all: true,
-      },
-    }),
-    // Agrégation mensuelle
-    prisma.donation.groupBy({
-      by: ["createdAt"],
-      _count: {
-        _all: true,
-      },
-    }),
-    // Nombre total de dons
-    prisma.donation.count(),
-  ]);
+  const [hairTypesStats, permissionsStats, monthlyStats, totalDonations] =
+    await Promise.all([
+      // Agrégation des types de cheveux
+      prisma.donation.groupBy({
+        by: ["hairTypes"],
+        _count: {
+          hairTypes: true,
+        },
+      }),
+      // Agrégation des permissions
+      prisma.donation.groupBy({
+        by: ["allowResale", "allowWigUse"],
+        _count: {
+          _all: true,
+        },
+      }),
+      // Agrégation mensuelle
+      prisma.donation.groupBy({
+        by: ["createdAt"],
+        _count: {
+          _all: true,
+        },
+      }),
+      // Nombre total de dons
+      prisma.donation.count(),
+    ]);
 
   const hairTypesData = hairTypesStats.map(({ hairTypes, _count }) => ({
     name: hairTypes,
@@ -90,7 +74,7 @@ export default async function StatsPage() {
     <div className="container mx-auto py-6">
       <h1 className="text-3xl font-bold mb-6">Statistiques des dons</h1>
       <Stats
-        donations={donations}
+        totalDonations={totalDonations}
         hairTypesData={hairTypesData}
         permissionsData={permissionsData}
         monthlyData={monthlyData}

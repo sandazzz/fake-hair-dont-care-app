@@ -1,9 +1,14 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, Tooltip, TooltipProps } from "recharts";
-import { Donation } from "@prisma/client";
-import { ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  TooltipProps,
+  ResponsiveContainer,
+} from "recharts";
 import { COLORS } from "./constants";
 
 interface PermissionsSectionProps {
@@ -11,14 +16,14 @@ interface PermissionsSectionProps {
     name: string;
     value: number;
   }>;
-  donations: Pick<Donation, "id" | "createdAt" | "status">[];
+  totalDonations: number;
 }
 
 type CustomTooltipProps = TooltipProps<number, string>;
 
 export function PermissionsSection({
   permissionsData,
-  donations,
+  totalDonations,
 }: PermissionsSectionProps) {
   const CustomPieTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (
@@ -32,10 +37,13 @@ export function PermissionsSection({
         <div className="bg-white p-4 border rounded-lg shadow-lg">
           <p className="font-semibold">{payload[0].name}</p>
           <p className="text-primary">
-            {payload[0].value.toLocaleString()} dons
+            {Math.round(
+              (payload[0].value / 100) * totalDonations
+            ).toLocaleString()}{" "}
+            dons
           </p>
           <p className="text-sm text-muted-foreground">
-            {((payload[0].value / donations.length) * 100).toFixed(1)}%
+            {payload[0].value.toFixed(1)}%
           </p>
         </div>
       );
@@ -82,8 +90,8 @@ export function PermissionsSection({
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {permissionsData.map(({ name, value }) => (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {permissionsData.map(({ name, value }, index) => (
           <Card key={name} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -91,12 +99,18 @@ export function PermissionsSection({
                   <p className="text-sm font-medium leading-none">{name}</p>
                   <p className="text-sm text-muted-foreground">
                     {Math.round(
-                      (value * donations.length) / 100
+                      (value / 100) * totalDonations
                     ).toLocaleString()}{" "}
                     dons
                   </p>
                 </div>
-                <p className="text-2xl font-bold">{value.toFixed(1)}%</p>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  />
+                  <p className="text-2xl font-bold">{value.toFixed(1)}%</p>
+                </div>
               </div>
             </CardContent>
           </Card>

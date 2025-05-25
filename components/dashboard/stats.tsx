@@ -1,14 +1,13 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Donation } from "@prisma/client";
 import { HairTypesSection } from "./stats/hair-types-section";
 import { PermissionsSection } from "./stats/permissions-section";
 import { MonthlySection } from "./stats/monthly-section";
 import { MonthlyData } from "./stats/types";
 
 interface StatsProps {
-  donations: Pick<Donation, "id" | "createdAt" | "status">[];
+  totalDonations: number;
   hairTypesData: Array<{
     name: string;
     value: number;
@@ -22,7 +21,7 @@ interface StatsProps {
 }
 
 export function Stats({
-  donations,
+  totalDonations,
   hairTypesData,
   permissionsData,
   monthlyData,
@@ -41,14 +40,14 @@ export function Stats({
         <TabsContent value="hair-types" className="space-y-4">
           <HairTypesSection
             hairTypesData={hairTypesData}
-            donations={donations}
+            totalDonations={totalDonations}
           />
         </TabsContent>
 
         <TabsContent value="permissions" className="space-y-4">
           <PermissionsSection
             permissionsData={permissionsData}
-            donations={donations}
+            totalDonations={totalDonations}
           />
         </TabsContent>
 

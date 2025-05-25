@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, Tooltip, TooltipProps } from "recharts";
-import { Donation } from "@prisma/client";
 import { ResponsiveContainer } from "recharts";
 import { COLORS } from "./constants";
 
@@ -12,14 +11,14 @@ interface HairTypesSectionProps {
     value: number;
     percentage: number;
   }>;
-  donations: Pick<Donation, "id" | "createdAt" | "status">[];
+  totalDonations: number;
 }
 
 type CustomTooltipProps = TooltipProps<number, string>;
 
 export function HairTypesSection({
   hairTypesData,
-  donations,
+  totalDonations,
 }: HairTypesSectionProps) {
   const CustomPieTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (
@@ -36,7 +35,7 @@ export function HairTypesSection({
             {payload[0].value.toLocaleString()} dons
           </p>
           <p className="text-sm text-muted-foreground">
-            {((payload[0].value / donations.length) * 100).toFixed(1)}%
+            {((payload[0].value / totalDonations) * 100).toFixed(1)}%
           </p>
         </div>
       );
