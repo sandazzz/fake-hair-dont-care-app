@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormField,
@@ -26,18 +25,17 @@ import {
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 import { sendDonation } from "./send-donation.action";
-import {
-  DonationInput,
-  DonationOutput,
-  DonationSchema,
-} from "@/lib/schemas";
+import { DonationInput, DonationOutput, DonationSchema } from "@/lib/schemas";
+
+import { useAction } from "next-safe-action/hooks";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function DonationForm() {
   const router = useRouter();
-
   const form = useForm<DonationInput, undefined, DonationOutput>({
     resolver: zodResolver(DonationSchema),
     defaultValues: {
@@ -52,46 +50,41 @@ export default function DonationForm() {
     },
   });
 
-  const onSubmit = async (data: DonationOutput) => {
-    console.table(data);
-
-    const result = await sendDonation(data);
-
-    if (result?.serverError) {
-      toast.error("Erreur serveur", {
-        description: "Une erreur est survenue lors de l'envoi du formulaire.",
+  const { execute, isPending } = useAction(sendDonation, {
+    onSuccess: (result) => {
+      toast.success("Don enregistré", {
+        description: (
+          <span className="text-black">
+            Merci pour votre contribution ! Vous allez avoir un email avec le
+            récapitulatif de votre don, veuillez vérifier votre boite mail.
+          </span>
+        ),
       });
-      return;
-    }
+      form.reset();
+      console.log("data", result.data?.id);
+      router.push(`/confirmation/${result.data?.id}`);
+    },
+    onError: (error) => {
+      if (error.error.validationErrors) {
+        toast.error("Erreur de validation", {
+          description: "Veuillez vérifier les champs du formulaire.",
+        });
+      } else {
+        toast.error("Erreur serveur", {
+          description: "Une erreur est survenue lors de l'envoi du formulaire.",
+        });
+      }
+    },
+  });
 
-    if (result?.validationErrors) {
-      toast.error("Erreur de validation", {
-        description: "Veuillez vérifier les champs du formulaire.",
-      });
-      return;
-    }
-
-    toast.success("Don enregistré", {
-      description: (
-        <span className="text-black">
-          Merci pour votre contribution ! Vous allez avoir un email avec le
-          récapitulatif de votre don, veuillez vérifier votre boite mail.
-        </span>
-      ),
-    });
-
-    form.reset();
-
-    const id = result?.data?.data;
-    if (result?.data) {
-      router.push(`/confirmation/${id}`);
-    }
+  const submitDonation = async (data: DonationOutput) => {
+    await execute(data);
   };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(submitDonation)}
         className="space-y-6 max-w-xl "
       >
         {/* Civilité ---------------------------------------------------- */}
@@ -349,9 +342,14 @@ export default function DonationForm() {
 
         <Button
           type="submit"
+          disabled={isPending}
           className="w-full rounded-none bg-pink-700 text-white hover:bg-pink-800 transition"
         >
-          Envoyer ma promesse de don
+          {isPending ? (
+            <Loader2 className="w-full h-4 animate-spin" />
+          ) : (
+            "Envoyer ma promesse de don"
+          )}
         </Button>
       </form>
     </Form>

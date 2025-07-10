@@ -24,10 +24,13 @@ export const sendDonation = action
         message: parsedInput.message,
         specialId,
       });
-      // Conditon non fonctionnel !!!
-      if (!mail.success) {
-        return { success: false, error: mail.error };
-      }
+
+      console.log("mail", mail);
+
+      // // Conditon non fonctionnel !!!
+      // if (!mail.success) {
+      //   return { success: false, error: mail.error };
+      // }
 
       const donation = await prisma.donation.create({
         data: {
@@ -38,7 +41,7 @@ export const sendDonation = action
         },
       });
 
-      return { success: true, data: donation.specialId };
+      return { success: true, id: donation.specialId };
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error("Erreur dans sendDonation:", err);
