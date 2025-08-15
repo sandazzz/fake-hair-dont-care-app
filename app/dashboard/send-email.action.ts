@@ -18,7 +18,7 @@ export const sendEmail = action
       const session = await getSession();
 
       if (!session?.user) {
-        return { success: false, error: "Non autorisé" };
+        throw new Error("Non autorisé");
       }
 
       await transporter.sendMail({
@@ -31,9 +31,6 @@ export const sendEmail = action
       return { success: true };
     } catch (error) {
       console.error("Erreur lors de l'envoi de l'email:", error);
-      return {
-        success: false,
-        error: "Une erreur est survenue lors de l'envoi de l'email",
-      };
+      throw new Error("Une erreur est survenue lors de l'envoi de l'email");
     }
   });
