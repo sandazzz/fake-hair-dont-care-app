@@ -13,39 +13,32 @@ const confirmDonationSchema = z.object({
 export const confirmDonation = action
   .schema(confirmDonationSchema)
   .action(async ({ parsedInput }) => {
-    try {
-      const session = await getSession();
+    const session = await getSession();
 
-      if (!session?.user) {
-        return { success: false, error: "Non autorisé" };
-      }
-
-      const donation = await prisma.donation.findUnique({
-        where: { id: parsedInput.id },
-      });
-
-      if (!donation) {
-        return { success: false, error: "Don non trouvé" };
-      }
-
-      if (donation.status === "confirmed") {
-        return { success: false, error: "Le don est déjà confirmé" };
-      }
-
-      await prisma.donation.update({
-        where: { id: parsedInput.id },
-        data: { status: "confirmed" },
-      });
-
-      revalidatePath(`/dashboard/${parsedInput.id}`);
-      revalidatePath("/dashboard");
-
-      return { success: true };
-    } catch (error) {
-      console.error("Erreur lors de la confirmation du don:", error);
-      return {
-        success: false,
-        error: "Une erreur est survenue lors de la confirmation du don",
-      };
+    if (!session?.user) {
+      throw new Error("Non autorisé");
     }
-  });
+
+    const donation = await prisma.donation.findUnique({
+      where: { id: parsedInput.id },
+    });
+
+    if (!donation) {
+      throw new Error("Don non trouvé");
+    }
+
+    if (donation.status === "confirmed") {
+      throw new Error("Le don est déjà confirmé");
+    }
+
+    await prisma.donation.update({
+      where: { id: parsedInput.id },
+      data: { status: "confirmed" },
+    });
+
+    revalidatePath(`/dashboard/${parsedInput.id}`);
+    revalidatePath("/dashboard");
+
+    return { success: true };
+  }
+  );

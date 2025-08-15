@@ -27,14 +27,14 @@ export function DashboardNav() {
       icon: BarChart3,
     },
     {
-      title: "Gestion des utilisateurs",
-      href: "/dashboard/users",
-      icon: Users,
-    },
-    {
       title: "Statistiques",
       href: "/dashboard/stats",
       icon: ChartArea,
+    },
+    {
+      title: "Gestion des utilisateurs",
+      href: "/dashboard/users",
+      icon: Users,
     },
   ];
 
