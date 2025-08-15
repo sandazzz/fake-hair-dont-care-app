@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 
 export default async function page() {
   const session = await getSession();
-  console.log(session);
 
   if (!session) {
     redirect("/login");

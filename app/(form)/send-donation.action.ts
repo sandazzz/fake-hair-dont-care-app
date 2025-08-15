@@ -45,10 +45,10 @@ export const sendDonation = action
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error("Erreur dans sendDonation:", err);
-        return { success: false, error: err.message };
+        throw new Error(err.message);
       } else {
         console.error("Erreur inconnue dans sendDonation:", err);
-        return { success: false, error: "Une erreur interne est survenue." };
+        throw new Error("Une erreur interne est survenue.");
       }
     }
   });

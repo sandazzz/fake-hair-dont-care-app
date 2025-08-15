@@ -60,10 +60,10 @@ L'équipe Fake Hair Don't Care`;
   } catch (error) {
     if (error instanceof Error) {
       console.error("Erreur envoi mail :", error);
-      return { success: false, error: error.message };
+      throw new Error(error.message);
     } else {
       console.error("Erreur inconnue :", error);
-      return { success: false, error: "Une erreur inconnue est survenue." };
+      throw new Error("Une erreur inconnue est survenue.");
     }
   }
 }
