@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -8,12 +8,19 @@ import { ArrowLeft } from "lucide-react";
 import { DonorInfoCard } from "@/components/dashboard/donation-details/donor-info";
 import { HairInfoCard } from "@/components/dashboard/donation-details/hair-info";
 import { SendEmailDialog } from "@/components/dashboard/donation-details/send-email-dialog";
+import { getSession } from "@/lib/auth-session";
 
 export default async function DonationDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   const { id } = await params;
 
   const donation = await prisma.donation.findUnique({

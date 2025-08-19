@@ -3,8 +3,15 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getSession } from "@/lib/auth-session";
 
 export default async function page() {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <div>
       <h1>Créer un utilisateur</h1>
