@@ -9,20 +9,22 @@ export default async function page() {
     <div>
       <h1>Créer un utilisateur</h1>
       <Link href="/dashboard/users">Retour à la liste des utilisateurs</Link>
-      <form action={async (formData) => {
-        "use server";
-        await auth.api.createUser({
-          body: {
-            email: formData.get("email") as string, // required
-            password: formData.get("password") as string, // required
-            name: formData.get("name") as string, // required
-            role: formData.get("role") as "admin" | "user",
-          },
-          headers: await headers(),
-        });
-        revalidatePath("/dashboard/users");
-        redirect("/dashboard/users");
-      }}>
+      <form
+        action={async (formData) => {
+          "use server";
+          await auth.api.createUser({
+            body: {
+              email: formData.get("email") as string, // required
+              password: formData.get("password") as string, // required
+              name: formData.get("name") as string, // required
+              role: formData.get("role") as "admin" | "user",
+            },
+            headers: await headers(),
+          });
+          revalidatePath("/dashboard/users");
+          redirect("/dashboard/users");
+        }}
+      >
         <input type="email" name="email" placeholder="Email" />
         <input type="password" name="password" placeholder="Password" />
         <input type="text" name="name" placeholder="Name" />
@@ -30,5 +32,5 @@ export default async function page() {
         <button type="submit">Create User</button>
       </form>
     </div>
-  )
+  );
 }

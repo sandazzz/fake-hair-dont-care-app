@@ -4,7 +4,9 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarProvider,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
+import ActiveUser from "./active-user";
 
 export default function DashboardShell({
   children,
@@ -24,6 +26,10 @@ export default function DashboardShell({
             </SidebarContent>
           </Sidebar>
           <main className="flex-1 w-full max-w-full p-2 sm:p-4 lg:p-6 xl:p-8 overflow-hidden">
+            <div className="flex items-center justify-between">
+              <SidebarTrigger />
+              <ActiveUser />
+            </div>
             {children}
           </main>
         </div>

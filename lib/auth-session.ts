@@ -7,3 +7,11 @@ export const getSession = async () => {
   });
   return session;
 };
+
+export const getUserData = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  console.log(session?.user);
+  return session?.user;
+};

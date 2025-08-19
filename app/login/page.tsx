@@ -1,101 +1,18 @@
-"use client";
+import { getSession } from "@/lib/auth-session";
+import LoginForm from "./login-form";
+import { redirect } from "next/navigation";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { signIn } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+export default async function Login() {
+  const session = await getSession();
 
-export default function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const router = useRouter();
+  if (session) {
+    redirect("/dashboard");
+  }
 
   return (
-    <main className="min-h-screen flex justify-center items-center">
+    <main className="min-h-screen flex justify-center items-center bg-gradient-to-br from-purple-600 via-pink-500 to-blue-600">
       <div className="max-w-md w-full">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
-            <CardDescription className="text-xs md:text-sm">
-              Enter your email below to login to your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                  }}
-                  value={email}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="password"
-                  autoComplete="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-                onClick={async () => {
-                  await signIn.email(
-                    {
-                      email,
-                      password,
-                    },
-                    {
-                      onRequest: () => {
-                        setLoading(true);
-                      },
-                      onResponse: () => {
-                        setLoading(false);
-                      },
-                      onSuccess: async () => {
-                        await router.push("/dashboard");
-                      },
-                    }
-                  );
-                }}
-              >
-                {loading ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  "Login"
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <LoginForm />
       </div>
     </main>
   );

@@ -1,4 +1,11 @@
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import { auth } from "@/lib/auth";
 import { getSession } from "@/lib/auth-session";
 import { revalidatePath } from "next/cache";
@@ -46,9 +53,7 @@ export default async function page() {
           ) : (
             users.users.map((u) => (
               <TableRow key={u.id}>
-                <TableCell className="font-medium">
-                  {u.name || "—"}
-                </TableCell>
+                <TableCell className="font-medium">{u.name || "—"}</TableCell>
                 <TableCell>{u.email || "—"}</TableCell>
                 <TableCell>{u.role || "—"}</TableCell>
 
@@ -69,16 +74,18 @@ export default async function page() {
 
 const DeleteUserButton = ({ userId }: { userId: string }) => {
   return (
-    <form action={async () => {
-      "use server";
-      await auth.api.removeUser({
-        body: {
-          userId: userId, // required
-        },
-        headers: await headers(),
-      });
-      revalidatePath("/dashboard/users");
-    }}>
+    <form
+      action={async () => {
+        "use server";
+        await auth.api.removeUser({
+          body: {
+            userId: userId, // required
+          },
+          headers: await headers(),
+        });
+        revalidatePath("/dashboard/users");
+      }}
+    >
       <button type="submit">Delete</button>
     </form>
   );
