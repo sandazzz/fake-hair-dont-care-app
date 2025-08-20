@@ -1,8 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { Stats } from "@/components/dashboard/stats";
 import { MONTHS } from "@/components/dashboard/stats/constants";
+import { getSession } from "@/lib/auth-session";
+import { redirect } from "next/navigation";
 
 export default async function StatsPage() {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   // Récupération des données avec agrégation côté serveur
   const [hairTypesStats, permissionsStats, monthlyStats, totalDonations] =
     await Promise.all([
