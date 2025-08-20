@@ -74,6 +74,7 @@ export default function LoginForm() {
               Email
             </Label>
             <Input
+              className="bg-white/10 backdrop-blur-sm border border-white/20"
               id="email"
               type="email"
               placeholder="m@example.com"
@@ -82,7 +83,7 @@ export default function LoginForm() {
               aria-invalid={!!errors.email}
             />
             {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
+              <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
           </div>
 
@@ -91,6 +92,7 @@ export default function LoginForm() {
               Password
             </Label>
             <Input
+              className="bg-white/10 backdrop-blur-sm border border-white/20"
               id="password"
               type="password"
               placeholder="password"

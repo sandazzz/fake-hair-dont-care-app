@@ -1,9 +1,8 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth-session";
+import CreateUserForm from "./create-user-form";
+import { Button } from "@/components/ui/button";
 
 export default async function page() {
   const session = await getSession();
@@ -12,32 +11,19 @@ export default async function page() {
     redirect("/login");
   }
 
+  if (session.user.role !== "admin") {
+    redirect("/dashboard");
+  }
+
   return (
-    <div>
-      <h1>Créer un utilisateur</h1>
-      <Link href="/dashboard/users">Retour à la liste des utilisateurs</Link>
-      <form
-        action={async (formData) => {
-          "use server";
-          await auth.api.createUser({
-            body: {
-              email: formData.get("email") as string, // required
-              password: formData.get("password") as string, // required
-              name: formData.get("name") as string, // required
-              role: formData.get("role") as "admin" | "user",
-            },
-            headers: await headers(),
-          });
-          revalidatePath("/dashboard/users");
-          redirect("/dashboard/users");
-        }}
-      >
-        <input type="email" name="email" placeholder="Email" />
-        <input type="password" name="password" placeholder="Password" />
-        <input type="text" name="name" placeholder="Name" />
-        <input type="text" name="role" placeholder="Role" />
-        <button type="submit">Create User</button>
-      </form>
+    <div className="container mx-auto py-6">
+      <div className="flex flex-col justify-between">
+        <h1 className="text-3xl font-bold mb-6">Créer un utilisateur</h1>
+        <Button asChild variant="outline" className="w-fit">
+          <Link href="/dashboard/users">Retour à la liste des utilisateurs</Link>
+        </Button>
+      </div>
+      <CreateUserForm />
     </div>
   );
 }
