@@ -7,7 +7,6 @@ import { getSession } from "@/lib/auth-session";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 const createUserSchema = z.object({
   email: z.string().email(),
