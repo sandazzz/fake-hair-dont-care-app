@@ -5,7 +5,7 @@ import { useState } from "react";
 import { sendEmail } from "@/app/dashboard/send-email.action";
 import { toast } from "sonner";
 import { Loader2, Mail } from "lucide-react";
-import { Donation } from "@/generated/prisma";
+import { Donation } from "@prisma/client";
 
 import {
     Dialog,

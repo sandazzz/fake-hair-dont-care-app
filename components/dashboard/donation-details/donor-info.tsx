@@ -1,6 +1,6 @@
 "use client";
 
-import type { Donation } from "@/generated/prisma";
+import type { Donation } from "@prisma/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
