@@ -2,7 +2,7 @@ import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
-import type { Donation } from "../../generated/prisma";
+import type { Donation } from "@prisma/client";
 import {
   Tooltip,
   TooltipContent,
