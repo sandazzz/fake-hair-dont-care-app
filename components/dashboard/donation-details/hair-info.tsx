@@ -8,7 +8,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import type { Donation } from "@prisma/client";
+import type { Donation } from "@/generated/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Check, X, Loader2, CheckCircle } from "lucide-react";
