@@ -14,7 +14,7 @@ export default function DashboardShell({
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
+    <SidebarProvider>  
       <div className="flex min-h-screen flex-col">
         <div className="flex flex-1">
           <Sidebar>

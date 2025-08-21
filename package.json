@@ -9,13 +9,6 @@
     "lint": "next lint",
     "postinstall": "prisma generate --no-engine"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@prisma/client",
-      "@prisma/engines",
-      "prisma"
-    ]
-  },
   "dependencies": {
     "@faker-js/faker": "^9.7.0",
     "@hookform/resolvers": "^5.0.1",
