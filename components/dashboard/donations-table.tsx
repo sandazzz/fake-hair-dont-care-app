@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { Donation } from "@prisma/client";
+import type { Donation } from "../../generated/prisma";
 import { useAction } from "next-safe-action/hooks";
 import { searchDonation } from "@/app/dashboard/search-donation.action";
 import { TableHeaderComponent } from "./table-header";
