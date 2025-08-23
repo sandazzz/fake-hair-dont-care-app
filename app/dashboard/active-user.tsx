@@ -8,5 +8,5 @@ export default async function ActiveUser() {
     throw error("User not found");
   }
 
-  return <div>{user.name}</div>;
+  return <div className="text-background">{user.name}</div>;
 }

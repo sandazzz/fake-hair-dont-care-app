@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-export function DashboardNav() {
+export function DashboardNav({ role }: { role: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const routes = [
@@ -25,16 +25,19 @@ export function DashboardNav() {
       title: "Dashboard",
       href: "/dashboard",
       icon: BarChart3,
+      role: ["admin", "user"],
     },
     {
       title: "Statistiques",
       href: "/dashboard/stats",
       icon: ChartArea,
+      role: ["admin", "user"],
     },
     {
       title: "Gestion des utilisateurs",
       href: "/dashboard/users",
       icon: Users,
+      role: ["admin"],
     },
   ];
 
@@ -54,7 +57,7 @@ export function DashboardNav() {
         <SidebarGroupLabel>Navigation</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            {routes.map((route) => (
+            {routes.filter((route) => route.role.includes(role)).map((route) => (
               <SidebarMenuItem key={route.href}>
                 <SidebarMenuButton
                   asChild

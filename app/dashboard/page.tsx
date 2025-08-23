@@ -1,5 +1,4 @@
 import { DonationsTable } from "@/components/dashboard/donations-table";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { getSession } from "@/lib/auth-session";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -19,14 +18,11 @@ export default async function Dashboard() {
   });
 
   return (
-    <>
-      <DashboardHeader
-        heading="Fake Hair Don't Care Management"
-        text="Manage and view all hair donations"
-      />
+    <div className="container mx-auto py-6">
+      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
       <div className="mt-6 w-full">
         <DonationsTable donationsList={donations} />
       </div>
-    </>
+    </div>
   );
 }
