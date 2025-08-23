@@ -32,9 +32,9 @@ export default async function DonationDetailsPage({
   }
 
   return (
-    <>
+    <div className="container mx-auto py-6">
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm" asChild className="bg-white/10 backdrop-blur-sm border border-white/60 text-background hover:bg-white/20 hover:text-background">
           <Link href="/dashboard">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
@@ -59,6 +59,6 @@ export default async function DonationDetailsPage({
           </Card>
         )}
       </div >
-    </>)
-    ;
+    </div>
+  );
 }

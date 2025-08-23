@@ -75,7 +75,7 @@ export function DonationsTable({
           <div className="overflow-hidden">
             <Table className="min-w-full divide-y divide-gray-200">
               <TableHeaderComponent />
-              <TableBody className="bg-white divide-y divide-gray-200">
+              <TableBody className="bg-white/10 backdrop-blur-sm border divide-y divide-gray-200">
                 {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
