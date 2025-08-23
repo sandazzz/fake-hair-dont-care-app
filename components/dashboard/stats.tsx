@@ -30,7 +30,7 @@ export function Stats({
     <div className="space-y-8">
       <Tabs defaultValue="hair-types" className="space-y-8">
         <div className="flex-start h-[60px]">
-          <TabsList className="grid w-[600px] grid-cols-3">
+          <TabsList className="grid w-full md:w-xl grid-cols-3">
             <TabsTrigger value="hair-types">Nature des cheveux</TabsTrigger>
             <TabsTrigger value="permissions">Permissions</TabsTrigger>
             <TabsTrigger value="monthly">Dons mensuels</TabsTrigger>

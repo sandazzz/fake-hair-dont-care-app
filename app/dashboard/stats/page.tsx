@@ -80,7 +80,7 @@ export default async function StatsPage() {
 
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-3xl font-bold mb-6">Statistiques des dons</h1>
+      <h1 className="text-3xl font-bold mb-6 text-background">Statistiques des dons</h1>
       <Stats
         totalDonations={totalDonations}
         hairTypesData={hairTypesData}

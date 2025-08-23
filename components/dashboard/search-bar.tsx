@@ -9,7 +9,7 @@ interface SearchBarProps {
 export function SearchBar({ value, onChange }: SearchBarProps) {
   return (
     <div className="flex items-center gap-2">
-      <Label htmlFor="controlled-input" className="sr-only">
+      <Label htmlFor="controlled-input" className="sr-only text-background">
         Rechercher un don
       </Label>
       <Input
@@ -18,7 +18,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         value={value}
         onChange={onChange}
         placeholder="Rechercher un don..."
-        className="w-full"
+        className="w-full bg-white/10 backdrop-blur-sm border border-white/60"
       />
     </div>
   );

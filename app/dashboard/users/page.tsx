@@ -37,21 +37,22 @@ export default async function page() {
   });
 
   return (
-    <div className="container mx-auto py-6">
-      <h1 className="text-3xl font-bold mb-6">Liste des utilisateurs</h1>
-      <Button asChild variant="outline" className="w-fit">
+    <div className="container mx-auto py-6 space-y-4">
+      <h1 className="text-3xl font-bold mb-6 text-background">Liste des utilisateurs</h1>
+      <Button asChild variant="outline" className="w-fit bg-white/10 backdrop-blur-sm border border-white/60 text-background">
         <Link href="/dashboard/users/create">Créer un utilisateur</Link>
       </Button>
-      <Table>
+      <Table className="bg-white/10 backdrop-blur-sm border border-white/60 rounded-md overflow-hidden">
         <TableHeader>
           <TableRow>
-            <TableHead>Nom</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Rôle</TableHead>
-            <TableHead className="text-right">Créé le</TableHead>
+            <TableHead className="text-background">Nom</TableHead>
+            <TableHead className="text-background">Email</TableHead>
+            <TableHead className="text-background">Rôle</TableHead>
+            <TableHead className="text-right text-background">Créé le</TableHead>
+            <TableHead className="text-right text-background"></TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="bg-white/10 backdrop-blur-sm border border-white/60">
           {users.users.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} className="text-center py-8">
@@ -61,14 +62,14 @@ export default async function page() {
           ) : (
             users.users.map((u) => (
               <TableRow key={u.id}>
-                <TableCell className="font-medium">{u.name || "—"}</TableCell>
-                <TableCell>{u.email || "—"}</TableCell>
-                <TableCell>{u.role || "—"}</TableCell>
+                <TableCell className="font-medium text-background">{u.name || "—"}</TableCell>
+                <TableCell className="text-background">{u.email || "—"}</TableCell>
+                <TableCell className="text-background">{u.role || "—"}</TableCell>
 
-                <TableCell className="text-right">
+                <TableCell className="text-right text-background">
                   {u.createdAt.toLocaleDateString("fr-FR")}
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-right text-background">
                   <DeleteUserButton userId={u.id} />
                 </TableCell>
               </TableRow>
