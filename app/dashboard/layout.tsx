@@ -34,7 +34,7 @@ export default async function DashboardShell({
               <DashboardNav role={role} />
             </SidebarContent>
           </Sidebar>
-          <main className="flex-1 w-full max-w-full p-2 sm:p-4 lg:p-6 xl:p-8 overflow-hidden bg-gradient-to-tr from-pink-300/30 via-pink-400/30 to-purple-500/40" >
+          <main className="flex-1 w-full max-w-full p-2 sm:p-4 lg:p-6 xl:p-8 overflow-hidden bg-gradient-to-tr from-pink-500 via-pink-500/60 to-purple-500/50" >
             <Card className="flex flex-row items-center justify-between w-full p-6 bg-white/10 backdrop-blur-sm border border-white/60">
               <SidebarTrigger className="text-white" />
               <ActiveUser />

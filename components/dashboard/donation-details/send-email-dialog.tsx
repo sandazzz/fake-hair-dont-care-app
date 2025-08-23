@@ -65,7 +65,7 @@ export function SendEmailDialog({ donation }: { donation: Donation }) {
           Envoyer un email
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-2xl flex flex-col gap-4 items-center">
         <DialogHeader>
           <DialogTitle>Envoyer un email de remerciement</DialogTitle>
           <DialogDescription>
@@ -115,8 +115,9 @@ export function SendEmailDialog({ donation }: { donation: Donation }) {
             />
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className="w-full flex justify-between">
           <Button
+            className="w-24"
             variant="outline"
             onClick={() => {
               setEmailOpen(false);

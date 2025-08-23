@@ -19,7 +19,7 @@ export default async function Dashboard() {
 
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <h1 className="text-3xl text-background font-bold mb-6">Dashboard</h1>
       <div className="mt-6 w-full">
         <DonationsTable donationsList={donations} />
       </div>

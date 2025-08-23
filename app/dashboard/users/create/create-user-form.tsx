@@ -56,7 +56,7 @@ export default function CreateUserForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 mt-6"
+        className="flex flex-col gap-4 mt-6 bg-white/10 backdrop-blur-sm border border-white/60 rounded-md p-6 w-full md:w-1/2"
         noValidate
       >
         <FormField
@@ -64,9 +64,9 @@ export default function CreateUserForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-background">Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="Email" {...field} />
+                <Input className="bg-white/10 backdrop-blur-sm border border-white/60 text-background" type="email" placeholder="Email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,9 +78,9 @@ export default function CreateUserForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-background">Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
+                <Input className="bg-white/10 backdrop-blur-sm border border-white/60 text-background" type="password" placeholder="Password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,9 +92,9 @@ export default function CreateUserForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel className="text-background">Name</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="Name" {...field} />
+                <Input className="bg-white/10 backdrop-blur-sm border border-white/60 text-background" type="text" placeholder="Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,10 +106,10 @@ export default function CreateUserForm() {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Role</FormLabel>
+              <FormLabel className="text-background">Role</FormLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/10 backdrop-blur-sm border border-white/60 text-background">
                     <SelectValue placeholder="Role" />
                   </SelectTrigger>
                 </FormControl>
@@ -123,7 +123,7 @@ export default function CreateUserForm() {
           )}
         />
 
-        <Button type="submit" disabled={isPending} className="cursor-pointer">
+        <Button type="submit" disabled={isPending} className="cursor-pointer bg-white/10 backdrop-blur-sm border border-white/60 text-background hover:bg-white/20 hover:text-background  ">
           {isPending ? "Création en cours..." : "Créer l'utilisateur"}
         </Button>
       </form>
